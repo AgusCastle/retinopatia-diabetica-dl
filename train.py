@@ -109,7 +109,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         Util.saveInfoXepoch(os.path.dirname(json_result) +
                             '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
 
-        if epoch > 30:
+        if epoch > 15:
             print('Decaimiento')
             scheduler.step(acc)
 

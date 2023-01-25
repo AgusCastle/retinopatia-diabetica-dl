@@ -4,6 +4,7 @@ from sys import exit
 from eval import eval, bestEpoch
 from train import train
 from utils.save_info import Util
+from utils.grad_cam import viewGradCam
 
 
 if __name__ == '__main__':
@@ -14,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--train', action='store_true', default=False)
     parser.add_argument('--model', default=None)
     parser.add_argument('--eval', action='store_true', default=False)
+    parser.add_argument('--gradcam', action='store_true', default=False)
 
     # Acciones para el dataset
     parser.add_argument('--csv2json', action='store_true', default=False)
@@ -22,7 +24,7 @@ if __name__ == '__main__':
     # Hyperparametros
     parser.add_argument('--epochs', type=int, default=1)
     parser.add_argument('--lr', type=float, default=1e-5)
-    parser.add_argument('--decay_lr', type=float, default=0.1)
+    parser.add_argument('--decay_lr', type=float, default=0.3)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--workers', type=int, default=8)
     parser.add_argument('--momentum', type=float, default=0.9)
@@ -36,12 +38,20 @@ if __name__ == '__main__':
     parser.add_argument('--dataloader_json', default=None)
     parser.add_argument('--json_result', default=None)
     parser.add_argument('--dump', default=None)
+    parser.add_argument('--img_path', default=None)
+    
 
     parser.add_argument('--txt', default=None)
     parser.add_argument('--path_src', default=None)
     parser.add_argument('--save_json', default=None)
     parser.add_argument('--set', default='train')
+
+    parser.add_argument('--category', type=int, default=0)
+
     args = parser.parse_args()
+
+    if args.gradcam:
+        viewGradCam(args.load_model, args.category, args.img_path, args.device)
 
     if args.eval and args.load_model is not None:
         bestEpoch(str(args.load_model), args.set, args.device)

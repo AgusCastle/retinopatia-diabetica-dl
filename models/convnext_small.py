@@ -9,10 +9,10 @@ from torchvision.ops.stochastic_depth import StochasticDepth
 from torchvision.ops.misc import ConvNormActivation
 from torchvision._internally_replaced_utils import load_state_dict_from_url
 
-from models.attentionblocks import BlockAttencionCAB
+from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 class ConvNeXtSmall(nn.Module):
-    def __init__(self, classes, attn = False) -> None:
+    def __init__(self, classes, attn = [False, True, False]) -> None:
         super().__init__()
         self.layer_scale = 1e-6
         self.n_layers = [3, 3, 27, 3]
@@ -32,20 +32,15 @@ class ConvNeXtSmall(nn.Module):
         # Bloque 1 [3, 96]
 
         for i in range(self.n_layers[0]):
-            if i == 0:
-                layers.append((CNBlock(96, self.layer_scale, 0.0)))
-            else:
-                layers.append((CNBlock(96, self.layer_scale, prob_sto * count_blocks)))
+            layers.append((CNBlock(96, self.layer_scale, prob_sto * count_blocks)))
             count_blocks += 1
 
-        self.ab1 = BlockAttencionCAB(in_planes=96, n_class= 5)
-
-        layers.append(self.ab1)
+        if attn[0]:
+            self.ab1 = BlockAttencionCAB(in_planes=96, n_class= 5)
+            layers.append(self.ab1)
 
         features.append(nn.Sequential(*layers))
         
-        
-
         #features.append(self.ab1)
 
         # DownSampling 96 -> 192
@@ -61,8 +56,9 @@ class ConvNeXtSmall(nn.Module):
             layers.append((CNBlock(192, self.layer_scale, prob_sto * count_blocks)))
             count_blocks += 1
         
-        self.ab2 = BlockAttencionCAB(in_planes=192, n_class= 5)
-        layers.append(self.ab2)
+        if attn[1]:
+            self.ab2 = BlockAttencionCAB(in_planes=192, n_class= 5)
+            layers.append(self.ab2)
 
         features.append(nn.Sequential(*layers))
 
@@ -82,9 +78,11 @@ class ConvNeXtSmall(nn.Module):
         for i in range(self.n_layers[2]):
             layers.append((CNBlock(384, self.layer_scale, prob_sto * count_blocks)))
             count_blocks += 1
+        
+        if attn[2]:
+            self.ab3 = BlockAttencionCAB(in_planes=384, n_class= 5)
+            layers.append(self.ab3)
 
-        self.ab3 = BlockAttencionCAB(in_planes=384, n_class= 5)
-        layers.append(self.ab3)
         features.append(nn.Sequential(*layers))
 
         # DownSampling 384 -> 768
@@ -108,10 +106,11 @@ class ConvNeXtSmall(nn.Module):
         features.append(nn.Sequential(*layers))
 
         self.features = nn.Sequential(*features)
-        self.avgpool = nn.AdaptiveAvgPool2d(1)
-        self.classifier = nn.Sequential(
-            norm_layer(768), nn.Flatten(1), nn.Linear(768, classes)
-        )
+        # self.avgpool = nn.AdaptiveAvgPool2d(1)
+        # self.classifier = nn.Sequential(
+        #     norm_layer(768), nn.Flatten(1), nn.Linear(768, classes)
+        # )
+        self.attb = AttnCABfc(768, 5, 5, 'custom')
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.Linear)):
@@ -121,8 +120,9 @@ class ConvNeXtSmall(nn.Module):
     
     def forward(self, x: Tensor) -> Tensor:
         x = self.features(x)
-        x = self.avgpool(x)
-        x = self.classifier(x)
+        # x = self.avgpool(x)
+        # x = self.classifier(x)
+        x = self.attb(x)
         return x
 
 class LayerNorm2d(nn.LayerNorm):
@@ -185,12 +185,12 @@ def _convnext_small(classes = 1000, pretrained = True):
 def convnext_small(classes, pretrained = True):
     model = _convnext_small(pretrained=pretrained)
 
-    model.classifier = nn.Sequential(
-        LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
-        nn.Flatten(start_dim=1, end_dim=-1),
-        nn.Linear(768, classes, bias=True),
-        nn.LogSoftmax(dim=1)
-    )
+    # model.classifier = nn.Sequential(
+    #     LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
+    #     nn.Flatten(start_dim=1, end_dim=-1),
+    #     nn.Linear(768, classes, bias=True),
+    #     nn.LogSoftmax(dim=1)
+    # )
     return model
 
 if __name__ == '__main__':

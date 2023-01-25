@@ -14,6 +14,7 @@ class DrDataset(Dataset):
 
         self.transforms = {
             'train': transforms.Compose([
+                transforms.Resize(512),
                 transforms.RandomResizedCrop(512),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
