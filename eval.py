@@ -22,6 +22,7 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
     mc, acc, dicta = eval(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, True)
     if filename is not None:
         Util.guardarPrediction(filename, {
+            'epoca' : epoch,
             'set'    : set,
             'acc_champ' : acc,
             'matriz' : mc,
