@@ -68,7 +68,7 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
 
     print(accuracy_score(trues, preds))
 
-    cfm = confusion_matrix(trues, preds)
+    cfm = confusion_matrix(trues, preds).tolist()
 
     print(cfm)
 
