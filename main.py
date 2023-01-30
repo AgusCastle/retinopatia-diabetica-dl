@@ -50,14 +50,12 @@ if __name__ == '__main__':
     parser.add_argument('--attn_block', nargs='+', type=int)
 
     args = parser.parse_args()
-    
-    print(args.attn_block)
 
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)
 
     if args.eval and args.load_model is not None:
-        bestEpoch(str(args.load_model), args.set, args.device)
+        bestEpoch(str(args.load_model), args.set, args.device, filename=args.json_result)
 
     if not os.path.exists('./runs'):
         os.makedirs('./runs', exist_ok=True)

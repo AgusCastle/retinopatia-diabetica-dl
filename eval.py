@@ -4,9 +4,10 @@ from torch.utils.data import DataLoader
 from data.drdataset import DrDataset
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
+from utils.save_info import Util
 
 
-def bestEpoch(model_load: str, set = 'valid',devicef = 1):
+def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
 
     device = torch.device(devicef)
 
@@ -18,8 +19,13 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1):
 
     print('Ultima epoca: {}'.format(epoch))
 
-    eval(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, True)
-
+    mc, acc, dicta = eval(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, True)
+    if filename is not None:
+        Util.guardarPrediction(filename, {
+            'matriz' : mc,
+            'acc'    : acc,
+            'clases' : dicta
+        })
 
 def eval(model, data: str, batch: int, workers: int, device: str, set: str, save: bool = False):
 
@@ -78,11 +84,17 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
         img_total = [1880, 189, 1344, 71, 275]
     
     champ = 0.0
+    list_acc = {}
     for i in range(5):
         res = float(cfm[i][i])/ img_total[i]
+        list_acc[i] = res
         print('{}: {}'.format(i, res))
 
         champ += res
 
     print('Campeon res: {:.2f}'.format((champ / 5) * 100))
+
+    return cfm, champ, list_acc
+
+    
     
