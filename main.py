@@ -47,8 +47,11 @@ if __name__ == '__main__':
     parser.add_argument('--set', default='train')
 
     parser.add_argument('--category', type=int, default=0)
+    parser.add_argument('--attn_block', nargs='+', type=int)
 
     args = parser.parse_args()
+    
+    print(args.attn_block)
 
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)
@@ -107,4 +110,4 @@ if __name__ == '__main__':
 
         train(args.model, model_load, json_result, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 1,
-              workers, 1, momentum, weigth_decay, device, patience, set_lr)
+              workers, 1, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block)

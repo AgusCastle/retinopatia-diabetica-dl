@@ -173,7 +173,7 @@ class CNBlock(nn.Module):
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-def _convnext_small(classes = 1000, pretrained = True, b_attn = [0, 0, 0]):
+def _convnext_small(classes = 1000, pretrained = True, b_attn = [False, False, False]):
 
     model = ConvNeXtSmall(classes, attn = b_attn)
 
@@ -184,9 +184,9 @@ def _convnext_small(classes = 1000, pretrained = True, b_attn = [0, 0, 0]):
 
 def convnext_small(classes, pretrained = True, b_attn = [0, 0, 0]):
 
-    b_attn = [ bool(x) for x in b_attn]
+    b_attn = [bool(x) for x in b_attn]
 
-    model = _convnext_small(pretrained=pretrained, b_attn)
+    model = _convnext_small(pretrained=pretrained,b_attn=b_attn)
 
     # model.classifier = nn.Sequential(
     #     LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
