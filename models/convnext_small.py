@@ -9,7 +9,7 @@ from torchvision.ops.stochastic_depth import StochasticDepth
 from torchvision.ops.misc import ConvNormActivation
 from torchvision._internally_replaced_utils import load_state_dict_from_url
 
-from attentionblocks import BlockAttencionCAB, AttnCABfc
+from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 class ConvNeXtSmall(nn.Module):
     def __init__(self, classes, attn = [True, True, True]) -> None:
