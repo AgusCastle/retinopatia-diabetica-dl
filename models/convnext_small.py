@@ -9,10 +9,10 @@ from torchvision.ops.stochastic_depth import StochasticDepth
 from torchvision.ops.misc import ConvNormActivation
 from torchvision._internally_replaced_utils import load_state_dict_from_url
 
-from models.attentionblocks import BlockAttencionCAB, AttnCABfc
+from attentionblocks import BlockAttencionCAB, AttnCABfc
 
 class ConvNeXtSmall(nn.Module):
-    def __init__(self, classes, attn = [False, True, False]) -> None:
+    def __init__(self, classes, attn = [True, True, True]) -> None:
         super().__init__()
         self.layer_scale = 1e-6
         self.n_layers = [3, 3, 27, 3]
@@ -173,17 +173,20 @@ class CNBlock(nn.Module):
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-def _convnext_small(classes = 1000, pretrained = True):
+def _convnext_small(classes = 1000, pretrained = True, b_attn = [0, 0, 0]):
 
-    model = ConvNeXtSmall(classes)
+    model = ConvNeXtSmall(classes, attn = b_attn)
 
     if pretrained:
             state_dict = load_state_dict_from_url("https://download.pytorch.org/models/convnext_small-0c510722.pth", progress=True)
             model.load_state_dict(state_dict, strict = False)
     return model
 
-def convnext_small(classes, pretrained = True):
-    model = _convnext_small(pretrained=pretrained)
+def convnext_small(classes, pretrained = True, b_attn = [0, 0, 0]):
+
+    b_attn = [ bool(x) for x in b_attn]
+
+    model = _convnext_small(pretrained=pretrained, b_attn)
 
     # model.classifier = nn.Sequential(
     #     LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
@@ -194,5 +197,4 @@ def convnext_small(classes, pretrained = True):
     return model
 
 if __name__ == '__main__':
-    print(convnext_small(5))
     print(count_parameters(convnext_small(5)))

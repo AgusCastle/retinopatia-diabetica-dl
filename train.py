@@ -13,7 +13,7 @@ import os
 
 
 def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0]):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -60,7 +60,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
             model = ConvNextSmallAB(modo='custom')
 
         if model_str == 'convnext_small':
-            model = convnext_small(classes=5)
+            model = convnext_small(classes=5,)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
