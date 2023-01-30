@@ -67,14 +67,22 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
         return accuracy_score(trues, preds), acc_class
 
     print(accuracy_score(trues, preds))
-    print(confusion_matrix(trues, preds))
+
     cfm = confusion_matrix(trues, preds)
+
+    print(cfm)
+
     if set == 'valid':
         img_total = [1253, 126, 895, 47, 182]
     if set == 'test':
-        img_total = [1880, 188, 1344, 71, 275]
-    print('0: ', float(cfm[0][0])/ img_total[0])
-    print('1: ', float(cfm[1][1])/ img_total[1])
-    print('2: ', float(cfm[2][2])/ img_total[2])
-    print('3: ', float(cfm[3][3])/ img_total[3])
-    print('4: ', float(cfm[4][4])/ img_total[4])
+        img_total = [1880, 189, 1344, 71, 275]
+    
+    champ = 0.0
+    for i in range(5):
+        res = float(cfm[i][i])/ img_total[i]
+        print('{}: {}'.format(i, res))
+
+        champ += res
+
+    print('Campeon res: {:.2f}'.format((champ / 5) * 100))
+    
