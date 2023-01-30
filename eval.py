@@ -94,7 +94,7 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
 
     print('Campeon res: {:.2f}'.format((champ / 5) * 100))
 
-    return cfm, champ, list_acc
+    return cfm, (champ / 5) * 100, list_acc
 
     
     
