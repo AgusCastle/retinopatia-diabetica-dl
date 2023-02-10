@@ -5,6 +5,7 @@ from data.drdataset import DrDataset
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
 from utils.save_info import Util
+from pathlib import Path
 
 
 def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
@@ -29,6 +30,66 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
             'clases' : dicta
         })
 
+def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
+    
+    device = torch.device(devicef)
+
+    checkpoint = torch.load(model_load, map_location=device)
+
+    epoch = checkpoint['epoch']
+    model = checkpoint['model']
+    model.to(device)
+    print('Modelo: {}, en la epoca: {} '.format(Path(model_load).name, epoch))
+    eval_to_vector(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, filename, Path(model_load).name)
+
+def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name):
+
+    dataloader = DataLoader(
+        DrDataset(data + '{}.json'.format(set), set),
+        batch_size=batch,
+        num_workers=workers,shuffle=False
+    )
+
+    if name == 'convnext_ab_agus.pth':
+        model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif name == 'convnext_agus.pth':
+        model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    else:
+        model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+
+    model.eval()
+
+    process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
+
+    list_pred = Util.loadJSONFile(jsonfile)
+
+    for _, batch in process_bar:
+        image, label, f = batch
+        label = label.squeeze()
+        
+        image = image.to(device)
+        label = label.to(device)
+
+        pred = model(image)
+
+        for indv in pred.tolist():
+            contains = getContainsDict(list_pred, f[0])
+            if contains == -1:
+                list_pred.append({
+                    'filename': f[0],
+                    'matrix': [indv],
+                    'label': int(label)})
+            else:
+                list_pred[contains]['matrix'].append(indv)
+    
+    Util.savePredictionModels(jsonfile, list_pred)
+    
+def getContainsDict(array, filename):
+    for i, obj in enumerate(array):
+        if obj['filename'] == filename:
+            return i
+    return -1
+
 def eval(model, data: str, batch: int, workers: int, device: str, set: str, save: bool = False):
 
     dataloader = DataLoader(
@@ -51,7 +112,6 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
         label = label.to(device)
 
         pred = model(image)
-
         preds.append(int(torch.argmax(pred, dim=1)[0]))
         trues.append(int(label))
         process_bar.set_description_str('Set: {}'.format(set), True)

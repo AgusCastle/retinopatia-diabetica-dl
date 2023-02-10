@@ -140,3 +140,14 @@ class Util():
 
         with open(filename, 'w') as file:
             json.dump(data, file)
+    
+    def loadJSONFile(filename):
+
+        with open(filename, 'r') as file:
+            data = json.load(file)
+        
+        return data
+
+    def savePredictionModels(filename, datas):
+        with open(filename, 'w') as file:
+            json.dump(datas, file)

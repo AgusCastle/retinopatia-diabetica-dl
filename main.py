@@ -1,7 +1,7 @@
 import argparse
 import os
 from sys import exit
-from eval import eval, bestEpoch
+from eval import eval, bestEpoch, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('--model', default=None)
     parser.add_argument('--eval', action='store_true', default=False)
     parser.add_argument('--gradcam', action='store_true', default=False)
+    parser.add_argument('--matrix', action='store_true', default= False)
 
     # Acciones para el dataset
     parser.add_argument('--csv2json', action='store_true', default=False)
@@ -53,6 +54,10 @@ if __name__ == '__main__':
 
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)
+
+    if args.matrix and args.load_model is not None:
+        generateMatrix_evals(str(args.load_model), args.set, args.device, filename=args.json_result)
+        exit()
 
     if args.eval and args.load_model is not None:
         bestEpoch(str(args.load_model), args.set, args.device, filename=args.json_result)
