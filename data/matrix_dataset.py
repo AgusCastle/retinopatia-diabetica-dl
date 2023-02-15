@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 import json
+import torch
 
 class MatrixDataset(Dataset):
     def __init__(self, root, set):
@@ -19,9 +20,9 @@ class MatrixDataset(Dataset):
             aux = self.data['matrix']
             aux.pop(3)
             aux.pop(1)
-            return aux, self.data[index]['label'], self.data[index]['filename']
+            return torch.FloatTensor(aux), self.data[index]['label'], self.data[index]['filename']
 
-        return self.data[index]['matrix'], self.data[index]['label'], self.data[index]['filename']
+        return torch.FloatTensor(self.data[index]['matrix']), self.data[index]['label'], self.data[index]['filename']
 
     def __len__(self):
         return self.data.__len__()
