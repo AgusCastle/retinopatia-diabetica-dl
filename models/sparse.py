@@ -18,7 +18,8 @@ class SparseFusion(nn.Module):
         x = torch.permute(x, (0, 2, 1))
         x = torch.matmul(x, self.W)
         x = torch.matmul(x, self.i)
-        return self.softmax(x)
+        x = torch.diagonal(x, 0) # Se que esta mal pero lo intente
+        return x
 
 class MatrixDataset(Dataset):
     def __init__(self, root, set):
@@ -54,18 +55,21 @@ if __name__ == '__main__':
     model.train()
 
     dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_valid.json', 'valid')
-    dataloader = DataLoader(dataset, shuffle= True, batch_size=1)
-
+    dataloader = DataLoader(dataset, shuffle= True, batch_size=256)
     for epoch in range(100):
         process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
 
         for _, batch in process_bar:
 
             matrix, label, _ = batch
+            label = label.squeeze()
             matrix = matrix.to(torch.device(0))
             label = label.to(torch.device(0))
 
             x = model(matrix)
+
+            print(x.size())
+            print(label.size())
 
             loss = criterion(x, label)
 
