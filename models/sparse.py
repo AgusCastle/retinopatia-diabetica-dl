@@ -15,10 +15,9 @@ class SparseFusion(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = torch.permute(x, (0, 2, 1))
         x = torch.matmul(x, self.W)
         x = torch.matmul(x, self.i)
-        x = torch.diagonal(x, 0) # Se que esta mal pero lo intente
+        x = torch.diagonal(x, dim1=1) # Se que esta mal pero lo intente
         return x
 
 class MatrixDataset(Dataset):
@@ -39,9 +38,9 @@ class MatrixDataset(Dataset):
             aux = self.data['matrix']
             aux.pop(3)
             aux.pop(1)
-            return torch.FloatTensor(aux), self.data[index]['label'], self.data[index]['filename']
+            return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
 
-        return torch.FloatTensor(self.data[index]['matrix']), self.data[index]['label'], self.data[index]['filename']
+        return torch.permute(torch.FloatTensor(self.data[index]['matrix']), (1, 0)), self.data[index]['label'], self.data[index]['filename']
 
     def __len__(self):
         return self.data.__len__()

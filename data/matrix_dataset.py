@@ -20,9 +20,9 @@ class MatrixDataset(Dataset):
             aux = self.data['matrix']
             aux.pop(3)
             aux.pop(1)
-            return torch.FloatTensor(aux), self.data[index]['label'], self.data[index]['filename']
+            return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
 
-        return torch.FloatTensor(self.data[index]['matrix']), self.data[index]['label'], self.data[index]['filename']
+        return torch.permute(torch.FloatTensor(self.data[index]['matrix']), (1, 0)), self.data[index]['label'], self.data[index]['filename']
 
     def __len__(self):
         return self.data.__len__()
