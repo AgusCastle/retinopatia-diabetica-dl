@@ -5,29 +5,30 @@ from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 import json
+import argparse
 
 class SparseFusion(nn.Module):
-    def __init__(self, n_classes) -> None:
+    def __init__(self, n_classes, device) -> None:
         super(SparseFusion, self).__init__()
         W = torch.randn(9, 5, dtype=torch.float32)
-        W = W.to(torch.device(0))
+        W = W.to(device)
         self.W = nn.Parameter(W)
 
         self.i = torch.eye(n_classes)
-        self.i = self.i.to(torch.device(0))
+        self.i = self.i.to(device)
 
         W2 = torch.randn(5, dtype=torch.float32)
-        W2 = W2.to(torch.device(0))
+        W2 = W2.to(device)
         self.W2 = nn.Parameter(W2)
 
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = torch.matmul(x, self.W)
-        x = torch.mul(x, self.i)
-        x = torch.diagonal(x, dim1= -1, dim2= -2)
-        x = torch.mul(x, self.W2)
-        return self.softmax(x)
+        # x = torch.matmul(x, self.W)
+        # x = torch.mul(x, self.i)
+        # x = torch.diagonal(x, dim1= -1, dim2= -2)
+        # x = torch.mul(x, self.W2)
+        return self.softmax((torch.diagonal((x @ self.W) * self.i, dim1= -1, dim2=-2)) * self.W2)
 
 class MatrixDataset(Dataset):
     def __init__(self, root, set):
@@ -42,30 +43,17 @@ class MatrixDataset(Dataset):
 
     def __getitem__(self, index):
 
-        if self.set == 'test': # Esto fue porque se duplicaron dos predicciones jajaja por que no se 
-            #pero asi fue rapido arrglarlo ya despues genero el json chido jaja
+        if self.set == 'test':
             aux = self.data[index]['matrix']
             aux.pop(3)
             aux.pop(1)
 
-            # subset = [aux[1], aux[6], aux[2], aux[5], aux[0]]
-
             return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
-            # return torch.FloatTensor(subset) , self.data[index]['label'], self.data[index]['filename']
-
+            
         return torch.permute(torch.FloatTensor(self.data[index]['matrix']), (1, 0)), self.data[index]['label'], self.data[index]['filename']
-        # aux = self.data[index]['matrix']
-
-        #subset = [aux[1], aux[6], aux[2], aux[5], aux[0]]
-
-        # return torch.FloatTensor(subset) , self.data[index]['label'], self.data[index]['filename']
-
+ 
     def __len__(self):
         return self.data.__len__()
-
-def adjust_learning_rate(optimizer, scale):
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = param_group['lr'] * scale
 
 def save_checkpoint(epoch, model, optimizer, filename, model_str = 'model'):
         state = {
@@ -77,10 +65,10 @@ def save_checkpoint(epoch, model, optimizer, filename, model_str = 'model'):
 
         torch.save(state, filename)
 
-def eval(model, set = 'valid', flag = False):
+def eval(model, device, set = 'valid', flag = False):
     
     model = model.eval()
-    model = model.to(torch.device(0))
+    model = model.to(device)
     dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_{}.json'.format(set), set)
     dataloader = DataLoader(dataset, shuffle= True, batch_size=256)
     process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
@@ -119,25 +107,40 @@ def eval(model, set = 'valid', flag = False):
 
     
 if __name__ == '__main__':
-    model = SparseFusion(5)
-    model = model.to(torch.device(0))
+
+    parser = argparse.ArgumentParser(description='')
+
+    parser.add_argument('--lr', default= 0.1, type=float)
+    parser.add_argument('--factor_lr', default= 0.1, type=float)
+    parser.add_argument('--patience', default= 100, type=int)
+    parser.add_argument('--epochs', default= 700, type=int)
+    parser.add_argument('--batch_size', default= 512, type=int)
+    parser.add_argument('--device', default=0, type=int)
+    parser.add_argument('--save_name', required= True)
+
+    args = parser.parse_args()
+
+    device = torch.device(args.device)
+
+    model = SparseFusion(5, device)
+    model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.5)
+    optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
     model.train()
     loss_total = 0.
     dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_train.json', 'train')
-    dataloader = DataLoader(dataset, shuffle= True, batch_size=512)
+    dataloader = DataLoader(dataset, shuffle= True, batch_size=args.batch_size)
     scheduler = ReduceLROnPlateau(
-        optimizer, 'min', patience=100, factor=0.1, verbose=True)
-    for epoch in range(700):
+        optimizer, 'min', patience=args.patience, factor=args.factor_lr, verbose=True)
+    for epoch in range(args.epochs):
         process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
         for _, batch in process_bar:
 
             matrix, label, _ = batch
             label = label.squeeze()
-            matrix = matrix.to(torch.device(0))
-            label = label.to(torch.device(0))
+            matrix = matrix.to(device)
+            label = label.to(device)
 
             x = model(matrix)
 
@@ -156,7 +159,8 @@ if __name__ == '__main__':
         print('Acc obtenido : {:.3f}'.format(acc * 100))
         scheduler.step(acc)
     
-    eval(model, 'test', True)
-    eval(model, 'valid', True)
+    eval(model, device, 'valid', True)
+    eval(model, device, 'test', True)
     
-    save_checkpoint(2000, model, optimizer, '/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/models/sparse_models/{}_{}.pth'.format('sparse', 'arr_5'))
+    
+    save_checkpoint(2000, model, optimizer, '/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/models/sparse_models/{}.pth'.format(args.save_name))
