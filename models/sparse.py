@@ -6,6 +6,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 import json
 import argparse
+import sys
 
 class SparseFusion(nn.Module):
     def __init__(self, n_classes, device) -> None:
@@ -24,11 +25,12 @@ class SparseFusion(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        # x = torch.matmul(x, self.W)
-        # x = torch.mul(x, self.i)
-        # x = torch.diagonal(x, dim1= -1, dim2= -2)
-        # x = torch.mul(x, self.W2)
-        return self.softmax((torch.diagonal((x @ self.W) * self.i, dim1= -1, dim2=-2)) * self.W2)
+        x = torch.matmul(x, self.W)
+        x = torch.mul(x, self.i)
+        x = torch.diagonal(x, dim1= -1, dim2= -2)
+        x = torch.mul(x, self.W2)
+        #return self.softmax((torch.diagonal((x @ self.W) * self.i, dim1= -1, dim2=-2)) * self.W2)
+        return self.softmax(x)
 
 class MatrixDataset(Dataset):
     def __init__(self, root, set):
@@ -116,14 +118,30 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', default= 700, type=int)
     parser.add_argument('--batch_size', default= 512, type=int)
     parser.add_argument('--device', default=0, type=int)
-    parser.add_argument('--save_name', required= True)
+    parser.add_argument('--save_name')
+    parser.add_argument('--eval', action='store_true', default=False)
+    parser.add_argument('--path_model', type=str)
 
     args = parser.parse_args()
 
     device = torch.device(args.device)
 
-    model = SparseFusion(5, device)
+    if not args.eval:
+        model = SparseFusion(5, device)
+    else:
+        checkp = torch.load(args.path_model, map_location=device)
+        model = checkp['model']
+        def count_parameters(model):
+            return sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print(count_parameters(model))
+
     model = model.to(device)
+
+    if args.eval:
+        eval(model, device, 'test', True)
+        eval(model, device, 'valid', True)
+        sys.exit()
+        
 
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
@@ -132,7 +150,7 @@ if __name__ == '__main__':
     dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_train.json', 'train')
     dataloader = DataLoader(dataset, shuffle= True, batch_size=args.batch_size)
     scheduler = ReduceLROnPlateau(
-        optimizer, 'min', patience=args.patience, factor=args.factor_lr, verbose=True)
+        optimizer, 'min', patience=args.patience, factor=args.factor_lr, verbose=True, min_lr=1e-4)
     for epoch in range(args.epochs):
         process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
         for _, batch in process_bar:
@@ -154,10 +172,10 @@ if __name__ == '__main__':
             process_bar.set_description_str(
             'Epoch {} : Loss: {:.3f}'.format(epoch + 1, float(loss)), True)
         
-        acc = eval(model)
+        acc = eval(model,device)
 
         print('Acc obtenido : {:.3f}'.format(acc * 100))
-        scheduler.step(acc)
+        scheduler.step(round(acc, 4))
     
     eval(model, device, 'valid', True)
     eval(model, device, 'test', True)

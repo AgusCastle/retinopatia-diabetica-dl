@@ -28,6 +28,7 @@ def viewGradCam(model_path: str, cat: int, img_path: str, device : int = 0):
 
 
     targets = [ClassifierOutputTarget(cat)]
+    #target_layers = [model.attb.cab_]
     target_layers = [model.features]
 
     with GradCAM(model=model, target_layers=target_layers) as cam:

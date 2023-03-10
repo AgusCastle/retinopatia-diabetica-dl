@@ -20,7 +20,7 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
 
     print('Ultima epoca: {}'.format(epoch))
 
-    mc, acc, dicta = eval(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, True)
+    mc, acc, dicta = eval(model, 'JSONFiles/kaggle/kaggle_', 1, 1, devicef, set, True)
     if filename is not None:
         Util.guardarPrediction(filename, {
             'epoca' : epoch,
