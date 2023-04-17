@@ -72,6 +72,12 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
 
         pred = model(image)
 
+        if int(label) != int(torch.argmax(pred[0])):
+            
+            print(int(torch.argmax(pred[0])))
+            print(f[0])
+            print(int(label))
+
         for indv in pred.tolist():
             contains = getContainsDict(list_pred, f[0])
             if contains == -1:

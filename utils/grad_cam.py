@@ -26,10 +26,9 @@ def viewGradCam(model_path: str, cat: int, img_path: str, device : int = 0):
     pred = model(input_tensor)
     print('Salida del modelo: ', int(torch.argmax(pred, dim=1)[0]))
 
-
     targets = [ClassifierOutputTarget(cat)]
-    #target_layers = [model.attb.cab_]
-    target_layers = [model.features]
+    target_layers = [model.attb.cab_]
+    #target_layers = [model.features]
 
     with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cams = cam(input_tensor=input_tensor, targets=targets)

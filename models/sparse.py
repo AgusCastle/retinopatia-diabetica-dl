@@ -28,7 +28,7 @@ class SparseFusion(nn.Module):
         x = torch.matmul(x, self.W)
         x = torch.mul(x, self.i)
         x = torch.diagonal(x, dim1= -1, dim2= -2)
-        x = torch.mul(x, self.W2)
+        # x = torch.mul(x, self.W2)
         #return self.softmax((torch.diagonal((x @ self.W) * self.i, dim1= -1, dim2=-2)) * self.W2)
         return self.softmax(x)
 
@@ -72,7 +72,7 @@ def eval(model, device, set = 'valid', flag = False):
     model = model.eval()
     model = model.to(device)
     dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_{}.json'.format(set), set)
-    dataloader = DataLoader(dataset, shuffle= True, batch_size=256)
+    dataloader = DataLoader(dataset, shuffle= True, batch_size=512)
     process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
 
     pred = []
