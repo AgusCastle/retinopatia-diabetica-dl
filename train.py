@@ -59,8 +59,8 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         if model_str == 'convnext_abs_custom':
             model = ConvNextSmallAB(modo='custom')
 
-        if model_str == 'convnext_small':
-            model = convnext_small(classes=5,)
+        if model_str == 'convnext_small': # ConvNeXt_####
+            model = convnext_small(classes=5 , b_attn=b_attn)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)

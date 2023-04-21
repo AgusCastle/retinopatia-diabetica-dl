@@ -1,8 +1,3 @@
-# from typing_extensions import override
-from torchvision.models import resnet101
-from torchvision.models.resnet import ResNet, model_urls, BasicBlock, Bottleneck
-from typing import Type, Any, Callable, Union, List, Optional
-from torch import Tensor, tensor, randn
 import torch
 import torch.nn as nn
 import pdb
@@ -97,7 +92,7 @@ class AttnCABfc(nn.Module):
         else:
             self.fc_ = nn.Sequential(
                 nn.Linear(in_planes, n_class),
-                nn.LogSoftmax(dim=1))
+                nn.Softmax(dim=1))
 
     def forward(self, x):
         x = self.gab_(x)        # torch.Size([2, 2048, 7, 7])

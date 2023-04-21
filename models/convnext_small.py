@@ -40,8 +40,6 @@ class ConvNeXtSmall(nn.Module):
             layers.append(self.ab1)
 
         features.append(nn.Sequential(*layers))
-        
-        #features.append(self.ab1)
 
         # DownSampling 96 -> 192
         features.append(nn.Sequential(
@@ -64,10 +62,6 @@ class ConvNeXtSmall(nn.Module):
 
         # DownSampling 192 -> 384
 
-        
-
-        #features.append(self.ab2)
-
         features.append(nn.Sequential( 
                                       norm_layer(192),
                                       nn.Conv2d(192, 384, kernel_size=2, stride=2)))
@@ -87,8 +81,6 @@ class ConvNeXtSmall(nn.Module):
 
         # DownSampling 384 -> 768
 
-        #features.append(self.ab3)
-
         features.append(nn.Sequential(
                                       norm_layer(384),
                                       nn.Conv2d(384, 768, kernel_size=2, stride=2)))
@@ -106,11 +98,8 @@ class ConvNeXtSmall(nn.Module):
         features.append(nn.Sequential(*layers))
 
         self.features = nn.Sequential(*features)
-        # self.avgpool = nn.AdaptiveAvgPool2d(1)
-        # self.classifier = nn.Sequential(
-        #     norm_layer(768), nn.Flatten(1), nn.Linear(768, classes)
-        # )
-        self.attb = AttnCABfc(768, 5, 5, 'custom')
+
+        self.attb = AttnCABfc(inplanes=768, n_class=classes, k=5, mode='custom')
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.Linear)):
@@ -120,8 +109,6 @@ class ConvNeXtSmall(nn.Module):
     
     def forward(self, x: Tensor) -> Tensor:
         x = self.features(x)
-        # x = self.avgpool(x)
-        # x = self.classifier(x)
         x = self.attb(x)
         return x
 
@@ -186,14 +173,8 @@ def convnext_small(classes, pretrained = True, b_attn = [0, 0, 0]):
 
     b_attn = [bool(x) for x in b_attn]
 
-    model = _convnext_small(pretrained=pretrained,b_attn=b_attn)
-
-    # model.classifier = nn.Sequential(
-    #     LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
-    #     nn.Flatten(start_dim=1, end_dim=-1),
-    #     nn.Linear(768, classes, bias=True),
-    #     nn.LogSoftmax(dim=1)
-    # )
+    model = _convnext_small(classes=classes, pretrained=pretrained, b_attn=b_attn)
+    
     return model
 
 if __name__ == '__main__':
