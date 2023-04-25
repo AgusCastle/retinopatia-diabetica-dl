@@ -6,6 +6,8 @@ from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
 from utils.save_info import Util
 from pathlib import Path
+from utils.metrics import MericsEvaluation
+from utils.services.google_service import GoogleService
 
 
 def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
@@ -96,7 +98,7 @@ def getContainsDict(array, filename):
             return i
     return -1
 
-def eval(model, data: str, batch: int, workers: int, device: str, set: str, save: bool = False):
+def eval(model, data: str, batch: int, workers: int, device: str, set: str, save: bool = False, info : dict = {}):
 
     dataloader = DataLoader(
         DrDataset(data + '{}.json'.format(set), set),
@@ -122,47 +124,56 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
         trues.append(int(label))
         process_bar.set_description_str('Set: {}'.format(set), True)
 
-    if not save:
-        cfm = confusion_matrix(trues, preds)
-        if set == 'valid':
-            img_total = [1253, 126, 895, 47, 182]
+    evals = MericsEvaluation(preds, trues, set)
+    gs = GoogleService()
 
-            acc_class = [float(cfm[0][0])/ img_total[0], float(cfm[1][1])/ img_total[1], 
-                        float(cfm[2][2])/ img_total[2], float(cfm[3][3])/ img_total[3], 
-                        float(cfm[4][4])/ img_total[4]]
+    info_r = [info['modelo'], info['epoca'], info['dataset'], set]
+    info_r.extend(evals.getall())
+    print(info_r)
+    gs.insertRowToSheet(info_r)
+    return evals.accuracy()
+
+    # if not save:
+    #     cfm = confusion_matrix(trues, preds)
+    #     if set == 'valid':
+    #         img_total = [1253, 126, 895, 47, 182]
+
+    #         acc_class = [float(cfm[0][0])/ img_total[0], float(cfm[1][1])/ img_total[1], 
+    #                     float(cfm[2][2])/ img_total[2], float(cfm[3][3])/ img_total[3], 
+    #                     float(cfm[4][4])/ img_total[4]]
         
-        if set == 'train':
-            img_total = [3133, 315, 2238, 118, 456]
+    #     if set == 'train':
+    #         img_total = [3133, 315, 2238, 118, 456]
 
-            acc_class = [float(cfm[0][0])/ img_total[0], float(cfm[1][1])/ img_total[1], 
-                        float(cfm[2][2])/ img_total[2], float(cfm[3][3])/ img_total[3], 
-                        float(cfm[4][4])/ img_total[4]]
+    #         acc_class = [float(cfm[0][0])/ img_total[0], float(cfm[1][1])/ img_total[1], 
+    #                     float(cfm[2][2])/ img_total[2], float(cfm[3][3])/ img_total[3], 
+    #                     float(cfm[4][4])/ img_total[4]]
 
-        return accuracy_score(trues, preds), acc_class
+    #     return accuracy_score(trues, preds), acc_class
 
-    print(accuracy_score(trues, preds))
+    # print(accuracy_score(trues, preds))
 
-    cfm = confusion_matrix(trues, preds).tolist()
+    # cfm = confusion_matrix(trues, preds).tolist()
 
-    print(cfm)
+    # print(cfm)
 
-    if set == 'valid':
-        img_total = [1253, 126, 895, 47, 182]
-    if set == 'test':
-        img_total = [1880, 189, 1344, 71, 275]
+    # if set == 'valid':
+    #     img_total = [1253, 126, 895, 47, 182]
+    # if set == 'test':
+    #     img_total = [1880, 189, 1344, 71, 275]
     
-    champ = 0.0
-    list_acc = {}
-    for i in range(5):
-        res = float(cfm[i][i])/ img_total[i]
-        list_acc[i] = res
-        print('{}: {}'.format(i, res))
+    # champ = 0.0
+    # list_acc = {}
+    # for i in range(5):
+    #     res = float(cfm[i][i])/ img_total[i]
+    #     list_acc[i] = res
+    #     print('{}: {}'.format(i, res))
 
-        champ += res
+    #     champ += res
 
-    print('Campeon res: {:.2f}'.format((champ / 5) * 100))
+    # print('Campeon res: {:.2f}'.format((champ / 5) * 100))
 
-    return cfm, (champ / 5) * 100, list_acc
+    # return cfm, (champ / 5) * 100, list_acc
 
     
     

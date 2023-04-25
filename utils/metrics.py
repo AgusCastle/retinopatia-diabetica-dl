@@ -42,6 +42,12 @@ class MericsEvaluation():
         spc = self.dataSize()
         return tuple([preds[i] / spc[i][1] for i in range(len(spc))])
     
+    def accuracy02(self):
+        return ((self.accuracy_per_class()[0] + self.accuracy_per_class()[2]) / 2)
+
+    def accuracy134(self):
+        return ((self.accuracy_per_class()[1] + self.accuracy_per_class()[3] + self.accuracy_per_class()[4]) / 3)
+    
     def class_accuracy(self):
         return sum(self.accuracy_per_class()) / len(self.accuracy_per_class())
     
@@ -62,15 +68,23 @@ class MericsEvaluation():
     
     def recall(self):
         return recall_score(self.labels, self.preds, average='micro')
+    
+    def getall(self):
+        a, b, c, d, e = self.accuracy_per_class()
+        result = [
+            self.accuracy(), self.class_accuracy(), self.accuracy02(), self.accuracy134(), a, b, c, d, e,
+            self.kappa(), self.matthews_coeficent(), self.f1(), self.precision(), self.recall() 
+        ]
+        return result
 
-metrics = MericsEvaluation([1,1,1,2,3,3,3,3,4,4,4,0,0,0,0,0],[2,1,2,2,3,3,3,4,4,4,4,0,0,0,0,0], 'ddr')
-print(metrics.accuracy())
-print(metrics.accuracy_per_class())
-print(metrics.class_accuracy())
-print(metrics.kappa())
-print(metrics.matthews_coeficent())
-print(metrics.f1())
-print(metrics.precision())
-print(metrics.recall())
+# metrics = MericsEvaluation([1,1,1,2,3,3,3,3,4,4,4,0,0,0,0,0],[2,1,2,2,3,3,3,4,4,4,4,0,0,0,0,0], 'ddr')
+# print(metrics.accuracy())
+# print(metrics.accuracy_per_class())
+# print(metrics.class_accuracy())
+# print(metrics.kappa())
+# print(metrics.matthews_coeficent())
+# print(metrics.f1())
+# print(metrics.precision())
+# print(metrics.recall())
 
     

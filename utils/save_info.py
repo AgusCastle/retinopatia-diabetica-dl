@@ -1,12 +1,68 @@
 import json
 import torch
 import csv
-
-
+import pandas as pd
 class Util():
 
     def __init__():
         super()
+
+    def xls2json():
+
+        data = {
+            "filenames": [],
+            "labels": []
+        }
+
+        for j, i in enumerate(['11', '12', '13', '14', '21', '22', '23', '24', '31', '32', '33', '34']):
+            df = pd.read_excel('/home/bringascastle/Documentos/datasets-retina/Messidor/Annotation_Base{}.xls'.format(i), sheet_name='Feuil1')
+
+            df = df[['Image name', 'Retinopathy grade']]
+
+            for index, row in df.iterrows():
+                if j in [0,1, 2, 3]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base1/'+ str(row['Image name']))
+                if j in [4,5, 6, 7]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base2/'+ str(row['Image name']))
+                if j in [8,9, 10, 11]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base3/'+ str(row['Image name']))
+
+                data['labels'].append(int(row['Retinopathy grade']))
+        
+        print(len(data['filenames']))
+
+        with open('JSONFiles/messidor/messidor _test.json', 'w') as file:
+                json.dump(data, file)
+    
+    def xls2json_binary():
+
+        data = {
+            "filenames": [],
+            "labels": []
+        }
+
+        for j, i in enumerate(['11', '12', '13', '14', '21', '22', '23', '24', '31', '32', '33', '34']):
+            df = pd.read_excel('/home/bringascastle/Documentos/datasets-retina/Messidor/Annotation_Base{}.xls'.format(i), sheet_name='Feuil1')
+
+            df = df[['Image name', 'Retinopathy grade']]
+
+            for index, row in df.iterrows():
+                if j in [0,1, 2, 3]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base1/'+ str(row['Image name']))
+                if j in [4,5, 6, 7]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base2/'+ str(row['Image name']))
+                if j in [8,9, 10, 11]:
+                    data['filenames'].append( '/home/bringascastle/Documentos/datasets-retina/Messidor/Base3/'+ str(row['Image name']))
+
+                if int(row['Retinopathy grade']) in [0 , 1]:
+                    data['labels'].append(0)
+                else:
+                    data['labels'].append(1)
+
+        print(len(data['filenames']))
+
+        with open('JSONFiles/messidor/messidor_binary_train.json', 'w') as file:
+                json.dump(data, file)
 
     def createInfoXepoch(filename):
         data = {
@@ -64,24 +120,26 @@ class Util():
 
         with open(path_csv, 'r') as file:
             datos = csv.reader(file, delimiter=',')
+        
+            next(datos, None)
 
-        next(datos, None)
+            for fila in datos:
+                img = fila[columna_i]
+                if img in ['20060411_58550_0200_PP.png', 'IM002385.jpg', 'IM004176.jpg', 'IM003718.jpg']:
+                    continue
+                grad = fila[columna_g]
 
-        for fila in datos:
-            img = fila[columna_i]
-            grad = fila[columna_g]
+                if ext is not None:
+                    data['filenames'].append(str(path_src + '/' + img))
+                    data['labels'].append(int(grad))
+                else:
+                    data['filenames'].append(str(path_src + '/' + img + ext))
+                    data['labels'].append(int(grad))
 
-            if ext is not None:
-                data['filenames'].append(str(path_src + '/' + img))
-                data['labels'].append(int(grad))
-            else:
-                data['filenames'].append(str(path_src + '/' + img + ext))
-                data['labels'].append(int(grad))
+            with open(path_to, 'w') as file:
+                json.dump(data, file)
 
-        with open(path_to, 'w') as file:
-            json.dump(data, file)
-
-        print('Se ha generado el JSON en: {}'.format(path_to))
+            print('Se ha generado el JSON en: {}'.format(path_to))
 
     def save_checkpoint(epoch, model, optimizer, filename, model_str):
         state = {
@@ -151,3 +209,8 @@ class Util():
     def savePredictionModels(filename, datas):
         with open(filename, 'w') as file:
             json.dump(datas, file)
+
+# Util.csv2json('/home/bringascastle/Documentos/datasets-retina/messidor2/messidor_data.csv',
+#                '/home/bringascastle/Documentos/datasets-retina/messidor2/IMAGES', 'JSONFiles/messidor2/messidor2_test.json',0, 1, 'olv')
+
+# Util.xls2json_binary()

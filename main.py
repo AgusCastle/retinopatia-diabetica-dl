@@ -72,10 +72,11 @@ if __name__ == '__main__':
         if args.txt is None or args.path_src is None:
             exit()
         Util.txt2json(args.txt, args.path_src, args.save_json, args.set)
+        exit()
 
     if args.train:
 
-        if args.model is None or args.model not in ['resnet50_abs', 'resnet50', 'convnext_custom', 'resnet', 'convnext', 'resnet_custom', 'resnet_abs_custom', 'resnet_abs', 'convnext_abs_original', 'convnext_abs_custom', 'convnext_small']:
+        if args.model is None or args.model not in ['resnet50_abs', 'resnet50', 'convnext_custom', 'resnet', 'convnext', 'resnet_custom', 'resnet_abs_custom', 'resnet_abs', 'convnext_abs_original', 'convnext_abs_custom', 'convnext_small_']:
             print('Elige un modelo a entrenar')
             exit()
 
@@ -91,7 +92,7 @@ if __name__ == '__main__':
                     args.json_result) + '/info_train_{}.json'.format(args.model)):
                 Util.createInfoXepoch(os.path.dirname(
                     args.json_result) + '/info_train_{}.json'.format(args.model))
-
+            
         if args.dump is None:
             print('Elije donde guardar tu modelo')
             exit()

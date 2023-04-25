@@ -99,7 +99,7 @@ class ConvNeXtSmall(nn.Module):
 
         self.features = nn.Sequential(*features)
 
-        self.attb = AttnCABfc(inplanes=768, n_class=classes, k=5, mode='custom')
+        self.attb = AttnCABfc(in_planes=768, n_class=classes, k=5, mode='custom')
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.Linear)):
