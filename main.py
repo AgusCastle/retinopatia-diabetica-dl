@@ -80,7 +80,7 @@ if __name__ == '__main__':
             print('Elige un modelo a entrenar')
             exit()
 
-        if args.json_result is not None:
+        if args.json_result is not None and False:
             json_result = args.json_result
 
             if not os.path.exists(json_result):

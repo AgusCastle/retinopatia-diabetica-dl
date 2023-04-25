@@ -80,8 +80,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
     model = model.to(device)
 
-    #data_eval = './JSONFiles/eyepacs_resam/eyepacs_'
-    data_eval = './JSONFiles/prueba/DDR_'
+    data_eval = './JSONFiles/eyepacs_resam/eyepacs_'
 
     best = 0.0
     best_dump = ''
@@ -93,6 +92,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
     btt_name = ''
     for i in b_attn:
         btt_name += str(i)
+    btt_name += '1'
 
     for epoch in range(start_epoch, epochs):
 
@@ -103,19 +103,19 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         print('Evaluando....')
 
         eval(model, data_eval, batch_s,
-                        workers_s, device, 'train', False, {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': data_eval, 'loss': loss})
+                        workers_s, device, 'train', True, {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
 
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
         acc = eval(model, data_eval, batch_s,
-                        workers_s, device, 'valid', False,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': data_eval})
+                        workers_s, device, 'valid', True,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': '-'})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
         
-        #eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
-        #               workers_s, device, '', False,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'messidor2'})
+        eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
+                       workers_s, device, '', False,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
         if epoch > 15:
             scheduler.step(acc)

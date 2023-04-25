@@ -127,9 +127,9 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, save
     evals = MericsEvaluation(preds, trues, set)
     gs = GoogleService()
 
-    info_r = [info['modelo'], info['epoca'], info['dataset'], set]
+    info_r = [info['modelo'], info['epoca'], info['dataset'], info['loss'], set]
     info_r.extend(evals.getall())
-    print(info_r)
+    
     gs.insertRowToSheet(info_r)
     return evals.accuracy()
 
