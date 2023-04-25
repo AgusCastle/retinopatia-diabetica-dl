@@ -28,8 +28,7 @@ class SparseFusion(nn.Module):
         x = torch.matmul(x, self.W)
         x = torch.mul(x, self.i)
         x = torch.diagonal(x, dim1= -1, dim2= -2)
-        # x = torch.mul(x, self.W2)
-        #return self.softmax((torch.diagonal((x @ self.W) * self.i, dim1= -1, dim2=-2)) * self.W2)
+        x = torch.mul(x, self.W2)
         return self.softmax(x)
 
 class MatrixDataset(Dataset):
