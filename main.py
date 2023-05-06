@@ -14,6 +14,7 @@ if __name__ == '__main__':
     # Acciones para el modelo
     parser.add_argument('--train', action='store_true', default=False)
     parser.add_argument('--model', default=None)
+    parser.add_argument('--att', required=True, action='store_true', default=False)
     parser.add_argument('--eval', action='store_true', default=False)
     parser.add_argument('--gradcam', action='store_true', default=False)
     parser.add_argument('--matrix', action='store_true', default= False)
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 
     if args.train:
 
-        if args.model is None or args.model not in ['resnet50_abs', 'resnet50', 'convnext_custom', 'resnet', 'convnext', 'resnet_custom', 'resnet_abs_custom', 'resnet_abs', 'convnext_abs_original', 'convnext_abs_custom', 'convnext_small_']:
+        if args.model is None or args.model not in ['resnet50_abs', 'resnet50', 'convnext_custom', 'resnet', 'convnext', 'resnet_custom', 'resnet_abs_custom', 'resnet_abs', 'convnext_abs_original', 'convnext_abs_custom', 'convnext_small_', 'densenet121', 'resnext50']:
             print('Elige un modelo a entrenar')
             exit()
 

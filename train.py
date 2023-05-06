@@ -4,7 +4,9 @@ from torch.utils.data import DataLoader
 from data.drdataset import DrDataset
 from models.resnet101 import resNet101Custom, resNet101Legacy, ResNet101AB
 from models.convnext import convNextSmallCustom, convNextSmallegacy, ConvNextSmallAB
-from models.resnet50 import ResNet50AB, resNet50Legacy
+from models.resnet50 import resNet50Custom
+from models.resnext50 import resNeXt50_agus
+from models.densenet121 import denseNet121_agus
 from models.convnext_small import convnext_small
 from tqdm import tqdm
 from utils.save_info import Util
@@ -13,7 +15,7 @@ import os
 
 
 def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -33,10 +35,13 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
             model = resNet101Legacy(classes)
 
         if model_str == 'resnet50':
-            model = resNet50Legacy(classes)
-
-        if model_str == 'resnet50_abs':
-            model = ResNet50AB()
+            model = resNet50Custom(classes)
+        
+        if model_str == 'resnext50':
+            model = resNeXt50_agus(classes)
+        
+        if model_str == 'densenet121':
+            model = denseNet121_agus(classes)
 
         if model_str == 'resnet_custom':
             model = resNet101Custom(classes)
@@ -90,9 +95,10 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         optimizer, 'min', patience=patience, factor=factor_lr,verbose=True)
     
     btt_name = ''
-    for i in b_attn:
-        btt_name += str(i)
-    btt_name += '1'
+    if att:
+        for i in b_attn:
+            btt_name += str(i)
+        btt_name += '1'
 
     for epoch in range(start_epoch, epochs):
 

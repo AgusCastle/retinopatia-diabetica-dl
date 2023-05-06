@@ -28,7 +28,7 @@ def resNet50Legacy(n_class):
 
     sequential_layers = nn.Sequential(
         nn.Linear(n_inputs, n_class),
-        nn.LogSoftmax(dim=1)
+        nn.Softmax(dim=1)
     )
 
     model.fc = sequential_layers
@@ -53,7 +53,7 @@ def resNet50Custom(n_class):
         nn.BatchNorm1d(2048),
         nn.ReLU(),
         nn.Linear(2048, n_class),
-        nn.LogSoftmax(dim=1)
+        nn.Softmax(dim=1)
     )
 
     model.fc = sequential_layers
