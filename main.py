@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('--eval', action='store_true', default=False)
     parser.add_argument('--gradcam', action='store_true', default=False)
     parser.add_argument('--matrix', action='store_true', default= False)
-
+    # python3.8 main.py --train --epochs 30 --lr 0.00001 --decay_lr 0.3 --batch 8 --workers 8 --momentum 0.9 --device 0 --patience 3 --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --dump ./runs3/convnext_1001_1_eyepacs/convnext_1001.pth --json_result ./runs3/convnext_1001_1_eyepacs/results.json 
     # Acciones para el dataset
     parser.add_argument('--csv2json', action='store_true', default=False)
     parser.add_argument('--txt2json', action='store_true', default=False)
@@ -33,6 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=int, default=0)
     parser.add_argument('--set_lr', action='store_true', default=False)
     parser.add_argument('--patience', type=int, default=3)
+    parser.add_argument('--version', type=int, default=0)
 
     # Ubicaciones de archivos
     parser.add_argument('--load_model', default=None)
@@ -80,8 +81,9 @@ if __name__ == '__main__':
             print('Elige un modelo a entrenar')
             exit()
 
+        json_result = args.json_result
         if args.json_result is not None and False:
-            json_result = args.json_result
+            
 
             if not os.path.exists(json_result):
                 os.makedirs(str(os.path.dirname(json_result)), exist_ok=True)
@@ -114,4 +116,4 @@ if __name__ == '__main__':
 
         train(args.model, model_load, json_result, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 1,
-              workers, 1, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block)
+              workers, 1, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version)

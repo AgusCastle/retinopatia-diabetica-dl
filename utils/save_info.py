@@ -1,5 +1,6 @@
 import json
 import torch
+import os
 import csv
 import pandas as pd
 class Util():
@@ -125,14 +126,16 @@ class Util():
 
             for fila in datos:
                 img = fila[columna_i]
-                if img in ['20060411_58550_0200_PP.png', 'IM002385.jpg', 'IM004176.jpg', 'IM003718.jpg']:
-                    continue
+                # if img in ['20060411_58550_0200_PP.png', 'IM002385.jpg', 'IM004176.jpg', 'IM003718.jpg']:
+                #    continue
                 grad = fila[columna_g]
 
-                if ext is not None:
+                if ext is None:
                     data['filenames'].append(str(path_src + '/' + img))
                     data['labels'].append(int(grad))
                 else:
+                    if not os.path.exists(str(path_src + '/' + img + ext)):
+                        print('No existe: {}'.format(str(path_src + '/' + img + ext)))
                     data['filenames'].append(str(path_src + '/' + img + ext))
                     data['labels'].append(int(grad))
 
@@ -210,7 +213,7 @@ class Util():
         with open(filename, 'w') as file:
             json.dump(datas, file)
 
-# Util.csv2json('/home/bringascastle/Documentos/datasets-retina/messidor2/messidor_data.csv',
-#                '/home/bringascastle/Documentos/datasets-retina/messidor2/IMAGES', 'JSONFiles/messidor2/messidor2_test.json',0, 1, 'olv')
+#Util.csv2json('/home/bringascastle/Documentos/datasets-retina/kaggle/testLabels.csv',
+#                '/home/bringascastle/Documentos/datasets-retina/kaggle/test', 'JSONFiles/eyepacs_resam/eyepacs_test.json',0, 1, '.jpeg')
 
 # Util.xls2json_binary()

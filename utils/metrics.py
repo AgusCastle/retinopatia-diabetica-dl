@@ -1,7 +1,7 @@
 from sklearn.metrics import (accuracy_score, precision_score, 
                              confusion_matrix, cohen_kappa_score, 
                              matthews_corrcoef, f1_score,
-                             roc_auc_score, recall_score)
+                             roc_auc_score, recall_score, balanced_accuracy_score)
 import numpy as np
 """
 Metricas de evaluacion a usar:
@@ -57,17 +57,20 @@ class MericsEvaluation():
     def matthews_coeficent(self):
         return matthews_corrcoef(self.labels, self.preds)
     
+    def balanced_accuracy(self):
+        return balanced_accuracy_score(self.labels, self.preds)
+
     def f1(self):
-        return f1_score(self.labels, self.preds, average='micro')
+        return f1_score(self.labels, self.preds, average='macro')
     
     def mAUC(self):
         return roc_auc_score(self.labels, self.preds,multi_class='ovr')
     
     def precision(self):
-        return precision_score(self.labels, self.preds, average='micro')
+        return precision_score(self.labels, self.preds, average='macro')
     
     def recall(self):
-        return recall_score(self.labels, self.preds, average='micro')
+        return recall_score(self.labels, self.preds, average='macro')
     
     def getall(self):
         a, b, c, d, e = self.accuracy_per_class()

@@ -13,7 +13,7 @@ import os
 
 
 def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0]):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -103,19 +103,19 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         print('Evaluando....')
 
         eval(model, data_eval, batch_s,
-                        workers_s, device, 'train', True, {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
+                        workers_s, device, 'train', True, {'modelo':'{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
 
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
         acc = eval(model, data_eval, batch_s,
-                        workers_s, device, 'valid', True,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': '-'})
+                        workers_s, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': '-'})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
         
         eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
-                       workers_s, device, '', False,  {'modelo': model_str + str(btt_name), 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
+                       workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
         if epoch > 15:
             scheduler.step(acc)

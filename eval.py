@@ -98,13 +98,20 @@ def getContainsDict(array, filename):
             return i
     return -1
 
-def eval(model, data: str, batch: int, workers: int, device: str, set: str, save: bool = False, info : dict = {}):
+def eval(model, data: str, batch: int, workers: int, device: str, set: str, test: bool = False, info : dict = {}):
 
-    dataloader = DataLoader(
-        DrDataset(data + '{}.json'.format(set), set),
-        batch_size=batch,
-        num_workers=workers,
-    )
+    if test:
+        dataloader = DataLoader(
+            DrDataset(data + '{}.json'.format(set), set),
+            batch_size=batch,
+            num_workers=workers,
+        )
+    else:
+        dataloader = DataLoader(
+            DrDataset(data + '.json', set),
+            batch_size=batch,
+            num_workers=workers,
+        )
 
     model.eval()
     process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
