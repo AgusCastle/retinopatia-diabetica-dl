@@ -88,7 +88,7 @@ class AttnCABfc(nn.Module):
                 nn.BatchNorm1d(2048),
                 nn.ReLU(),
                 nn.Linear(2048, n_class),
-                nn.LogSoftmax(dim=1))
+                nn.Softmax(dim=1))
         else:
             self.fc_ = nn.Sequential(
                 nn.Linear(in_planes, n_class),

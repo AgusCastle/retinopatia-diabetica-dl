@@ -135,12 +135,11 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
 
     evals = MericsEvaluation(preds, trues, set)
     gs = GoogleService()
-    print(evals)
     info_r = [info['modelo'], info['epoca'], info['dataset'], info['loss'], set]
     info_r.extend(evals.getall())
     
     gs.insertRowToSheet(info_r)
-    return evals.accuracy()
+    return evals.class_accuracy()
 
     # if not save:
     #     cfm = confusion_matrix(trues, preds)

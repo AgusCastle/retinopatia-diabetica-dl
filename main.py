@@ -13,6 +13,7 @@ if __name__ == '__main__':
 
     # Acciones para el modelo
     parser.add_argument('--train', action='store_true', default=False)
+    parser.add_argument('--mode', type=str, default='multi')
     parser.add_argument('--model', default=None)
     parser.add_argument('--att', required=True, action='store_true', default=False)
     parser.add_argument('--eval', action='store_true', default=False)
@@ -116,5 +117,5 @@ if __name__ == '__main__':
         model_load = args.load_model
 
         train(args.model, model_load, json_result, dump,
-              dataloader_json, epoch, lr, decay_lr, batch, 1,
-              workers, 1, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version)
+              dataloader_json, epoch, lr, decay_lr, batch, 4,
+              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode)

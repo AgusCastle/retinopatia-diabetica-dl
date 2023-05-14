@@ -15,7 +15,7 @@ import os
 
 
 def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi'):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -31,41 +31,45 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
     if model_load is None:
         start_epoch = 0
 
-        if model_str == 'resnet':
-            model = resNet101Legacy(classes)
+        if mode == 'bin':
+            model = convnext_small(classes=2 , b_attn=b_attn)
+        else:
 
-        if model_str == 'resnet50':
-            model = resNet50Custom(classes)
-        
-        if model_str == 'resnext50':
-            model = resNeXt50_agus(classes)
-        
-        if model_str == 'densenet121':
-            model = denseNet121_agus(classes)
+            if model_str == 'resnet':
+                model = resNet101Legacy(classes)
 
-        if model_str == 'resnet_custom':
-            model = resNet101Custom(classes)
+            if model_str == 'resnet50':
+                model = resNet50Custom(classes)
+            
+            if model_str == 'resnext50':
+                model = resNeXt50_agus(classes)
+            
+            if model_str == 'densenet121':
+                model = denseNet121_agus(classes)
 
-        if model_str == 'resnet_abs':
-            model = ResNet101AB(classes=5, k=5)
+            if model_str == 'resnet_custom':
+                model = resNet101Custom(classes)
 
-        if model_str == 'resnet_abs_custom':
-            model = ResNet101AB(classes=5, k=5, modo='custom')
+            if model_str == 'resnet_abs':
+                model = ResNet101AB(classes=5, k=5)
 
-        if model_str == 'convnext':
-            model = convNextSmallegacy(classes)
+            if model_str == 'resnet_abs_custom':
+                model = ResNet101AB(classes=5, k=5, modo='custom')
 
-        if model_str == 'convnext_custom':
-            model = convNextSmallCustom(classes)
+            if model_str == 'convnext':
+                model = convNextSmallegacy(classes)
 
-        if model_str == 'convnext_abs_original':
-            model = ConvNextSmallAB(modo='original')
+            if model_str == 'convnext_custom':
+                model = convNextSmallCustom(classes)
 
-        if model_str == 'convnext_abs_custom':
-            model = ConvNextSmallAB(modo='custom')
+            if model_str == 'convnext_abs_original':
+                model = ConvNextSmallAB(modo='original')
 
-        if model_str == 'convnext_small_': # ConvNeXt_####
-            model = convnext_small(classes=5 , b_attn=b_attn)
+            if model_str == 'convnext_abs_custom':
+                model = ConvNextSmallAB(modo='custom')
+
+            if model_str == 'convnext_small_': # ConvNeXt_####
+                model = convnext_small(classes=5 , b_attn=b_attn)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
@@ -92,7 +96,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
     factor_lr = decay_lr
     scheduler = ReduceLROnPlateau(
-        optimizer, 'min', patience=patience, factor=factor_lr,verbose=True)
+        optimizer, 'min', patience=patience, factor=factor_lr,verbose=True, min_lr= 1e-7)
     
     btt_name = ''
     if att:
