@@ -1,5 +1,5 @@
 from torchvision.models import densenet121
-import torch as nn
+import torch.nn as nn
 
 def denseNet121_agus(classes = 5):
 
@@ -24,4 +24,4 @@ def denseNet121_agus(classes = 5):
 
     return model
 
-denseNet121_agus()
+#denseNet121_agus()

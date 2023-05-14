@@ -1,5 +1,5 @@
 from torchvision.models import resnext50_32x4d
-import torch as nn
+import torch.nn as nn
 
 def resNeXt50_agus(classes = 5):
     

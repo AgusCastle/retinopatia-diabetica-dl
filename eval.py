@@ -21,8 +21,9 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
     model.to(device)
 
     print('Ultima epoca: {}'.format(epoch))
-
-    mc, acc, dicta = eval(model, 'JSONFiles/kaggle/kaggle_', 1, 1, devicef, set, True)
+    eval(model, 'JSONFiles/eyepacs_resam/eyepacs_', 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': 'eyepacs'})
+    #mc, acc, dicta = eval(model, 'JSONFiles/kaggle/kaggle_', 1, 1, devicef, set, True)
+    '''
     if filename is not None:
         Util.guardarPrediction(filename, {
             'epoca' : epoch,
@@ -31,6 +32,7 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
             'matriz' : mc,
             'clases' : dicta
         })
+    '''
 
 def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
     
@@ -50,7 +52,7 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         DrDataset(data + '{}.json'.format(set), set),
         batch_size=batch,
         num_workers=workers,shuffle=False
-    )
+    ) 
 
     if name == 'convnext_ab_agus.pth':
         model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
@@ -127,13 +129,13 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
         label = label.to(device)
 
         pred = model(image)
-        preds.append(int(torch.argmax(pred, dim=1)[0]))
-        trues.append(int(label))
+        preds.extend(torch.argmax(pred, dim=1).tolist())
+        trues.extend(label.tolist())
         process_bar.set_description_str('Set: {}'.format(set), True)
 
     evals = MericsEvaluation(preds, trues, set)
     gs = GoogleService()
-
+    print(evals)
     info_r = [info['modelo'], info['epoca'], info['dataset'], info['loss'], set]
     info_r.extend(evals.getall())
     
