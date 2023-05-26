@@ -53,7 +53,7 @@ def resNet50Custom(n_class):
         nn.BatchNorm1d(2048),
         nn.ReLU(),
         nn.Linear(2048, n_class),
-        nn.Softmax(dim=1)
+        nn.LogSoftmax(dim=1)
     )
 
     model.fc = sequential_layers

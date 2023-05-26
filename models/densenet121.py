@@ -15,7 +15,7 @@ def denseNet121_agus(classes = 5):
         nn.BatchNorm1d(2048),
         nn.ReLU(),
         nn.Linear(2048, classes),
-        nn.Softmax(dim=1)
+        nn.LogSoftmax(dim=1)
     )
 
     model.classifier = sequential_layers
