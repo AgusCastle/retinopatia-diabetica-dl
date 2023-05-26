@@ -25,6 +25,9 @@ class GoogleService():
 
         finally:
             if len(self.errors) != 0:
+                gc = gspread.authorize(self.credentials)
+                sheet = gc.open('Referencias_compartidas')
+                worksheet = sheet.get_worksheet(1)
                 worksheet.append_rows(self.errors)
                 self.errors = []
             print('Resultados actualizados en el Sheet.')

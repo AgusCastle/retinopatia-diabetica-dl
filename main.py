@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     # Hyperparametros
     parser.add_argument('--epochs', type=int, default=1)
-    parser.add_argument('--lr', type=float, default=1e-5)
+    parser.add_argument('--lr', type=float, default=2e-5)
     parser.add_argument('--decay_lr', type=float, default=0.3)
     parser.add_argument('--batch', type=int, default=16)
     parser.add_argument('--workers', type=int, default=8)
@@ -118,4 +118,4 @@ if __name__ == '__main__':
 
         train(args.model, model_load, json_result, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 4,
-              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode)
+              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode, att=args.att)

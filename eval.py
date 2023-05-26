@@ -21,7 +21,7 @@ def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
     model.to(device)
 
     print('Ultima epoca: {}'.format(epoch))
-    eval(model, 'JSONFiles/eyepacs_resam/eyepacs_', 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': 'eyepacs'})
+    eval(model, 'JSONFiles/messidor2/messidor2_', 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': 'eyepacs'})
     #mc, acc, dicta = eval(model, 'JSONFiles/kaggle/kaggle_', 1, 1, devicef, set, True)
     '''
     if filename is not None:

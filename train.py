@@ -89,14 +89,14 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
     model = model.to(device)
 
-    data_eval = './JSONFiles/eyepacs_resam/eyepacs_'
+    data_eval = './JSONFiles/eyepacs_cab/eyepacs_'
 
     best = 0.0
     best_dump = ''
 
     factor_lr = decay_lr
     scheduler = ReduceLROnPlateau(
-        optimizer, 'min', patience=patience, factor=factor_lr,verbose=True, min_lr= 1e-7)
+        optimizer, 'min', patience=patience, factor=factor_lr,verbose=True, min_lr= 1e-8)
     
     btt_name = ''
     if att:
@@ -106,25 +106,25 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
     for epoch in range(start_epoch, epochs):
 
-        loss = train_one_epoch(model, dataloader_train, optimizer,
+        model, loss = train_one_epoch(model, dataloader_train, optimizer,
                         criterion, epoch, device, None)
 
         Util.save_checkpoint(epoch, model, optimizer, dump, model_str)
         print('Evaluando....')
 
-        eval(model, data_eval, batch_s,
-                        workers_s, device, 'train', True, {'modelo':'{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
+        #eval(model, data_eval, batch_s,
+        #                workers_s, device, 'train', True, {'modelo':'{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
 
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
-        acc = eval(model, data_eval, batch_s,
+        eval(model, data_eval, batch_s,
                         workers_s, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': '-'})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
         
-        eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
+        acc = eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
                        workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
         if epoch > 15:
@@ -162,7 +162,7 @@ def train_one_epoch(model, dataloader, optimizer: torch.optim.Adam, criterion, e
     #Util.guardarLoss(json_result, loss_total/len(dataloader))
     print('Perdida promedio: {:.4f}'.format(loss_total/len(dataloader)))
 
-    return loss_total/len(dataloader)
+    return model, loss_total/len(dataloader)
 
 
 def adjust_learning_rate(optimizer, scale):

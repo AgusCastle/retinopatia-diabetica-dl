@@ -36,8 +36,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
 
         if attn[0]:
-            self.ab1 = BlockAttencionCAB(in_planes=96, n_class= 5)
-            layers.append(self.ab1)
+            layers.append(BlockAttencionCAB(in_planes=96, n_class= 5))
 
         features.append(nn.Sequential(*layers))
 
@@ -55,8 +54,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
         
         if attn[1]:
-            self.ab2 = BlockAttencionCAB(in_planes=192, n_class= 5)
-            layers.append(self.ab2)
+            layers.append(BlockAttencionCAB(in_planes=192, n_class= 5))
 
         features.append(nn.Sequential(*layers))
 
@@ -74,8 +72,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
         
         if attn[2]:
-            self.ab3 = BlockAttencionCAB(in_planes=384, n_class= 5)
-            layers.append(self.ab3)
+            layers.append(BlockAttencionCAB(in_planes=384, n_class= 5))
 
         features.append(nn.Sequential(*layers))
 
