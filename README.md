@@ -1,10 +1,65 @@
-# Este es un modelo que predice la retinopatia diabetica en las 5 fases
+# Clasificacion de la retinopatia diabetica - ConvNeXt CabNET
 
-## Esta es la forma de como se debe ver el entorno
+## Requirements
 
-![Carpetas](imgs/carpeta.png)
+- Python 3.8.6
+- CUDA 10.2
 
-- # Transformacion de data **_txt2json_**
+## Ambientacion
+
+- Creamos primero un entorno virtual en alguna carpeta y lo activamos.
+    - ``` python3.8 -m venv retinopathy```
+- Entramos a nuestro entorno virtual y ahora ejecutamos el requirements.txt
+    - ``` python3.8 -m pip install -r requirements.txt```
+
+## Datasets
+
+Ya listo nuestro ambiente, vamos a crear los **json**, para tener una comparacion fiel de los entrenamientos vamos a ocupar los mismos que se generaron en el servidor.
+- [Datasets EyePacs, Messidor2, DDR]() (Encuanto tenga acceso a las compus de la escuela subo esos archivos)
+
+- Ya descargados, los acomodaremos en la carpeta JSONFiles en los directorios como estan en el zip.
+
+- Despues se correra el siguiente comando para acomodar las paths correctas del servidor en cuestion. Esto se realizara una vez por cada JSON a actualizar.
+
+    ``` python3.8 main.py --data_update --path_images <ruta nueva> --json_file <Ruta JSON a actualizar>```
+
+## Entrenamiento
+
+### Para entrenar se utiliza el siguiente comando
+
+```
+python3.8 main.py --train --epochs 10 --batch 8 --workers 8 --device 0 
+--convnext_small_
+--dataloader_json ./JSONFiles/DDR_
+--lr 0.00002 decay_lr 0.3 --patience 3 --att --attn_block 0 0 1
+--dump ./runs/ConvNeXt_0011/ConvNext_0011.pth
+--version 1 
+```
+
+**_--dump_** es la ruta donde el modelo se va a guardar el modelo junto a su nombre
+
+**_--dataloader_json_** este da la ruta de los json con los datos para entrenar, evaluar, etc. termininando con la base de datos que tenemos por ejemplo **_'./JSONFiles/DDR\_'_**
+
+**_version_** este nos ayuda a diferenciarlo en el sheet mas que nada va ah ayudar para diferenciarlo de otros modelos.
+
+Todos los modelos se guardan por epoca y se guarda el checkpoint con mejores resultados con respecto al Class Accuracy.
+
+Se guardan en especifico modelo, nombre, optimizador, ultima epoca y informacion de hyperparametros.
+
+En el caso que se requiera retomar el entrenamiento de un modelos se suguiere ocupar el mismo script pero agregando la siguiente linea:
+ ``` --load_model <path del modelo a seguir entrenando>```
+
+ Si se requiere entrenamiento sin los pesos de ImageNet agregar el siguiente parametro
+ ```--no_pretrain```
+
+Si no hay errores no deben haber problemas, es importante que haya internet por los resultados.
+
+
+### Los demas parametros los puede deducir facilmente XD
+
+## Extras
+
+### Transformacion de data **_txt2json_**
 
 ### Las clases seran guardadas en un **_json_** con el siguiente formato.
 
@@ -48,32 +103,3 @@ imagen2.png 1
 ### **_--save_json_** es la ruta donde se va guargar el formato debe ser **_./JSONFiles/{dataset}_** donde dataset se puede poner como en el ejemplo de arriba.
 
 ### **_--set_** se define si es **valid** ó **test** ó **train**
-
-- # Entrenamiento desde pesos de IMAGENET
-
-### Para entrenar se utiliza el siguiente comando
-
-```
-python3.8 main.py
---train --json_result ./runs/ddr_imagenet_convnext/result_convnext.json
---dump ./runs/ddr_imagenet_convnext/DDR_convnext.pth --dataloader_json ./JSONFiles/DDR_
---model convnext
---device 0
---batch 8
---workers 8
---epochs 100
---lr 0.00002
---decay_lr 0.1
-```
-
-### Este comando tien varios muy claros como el de los hiperparametros.
-
-### **_--json_result_** se creara un archivo que guardara perdida y predicciones realizadas(esto ultimo no esta todavia implementado) y se debe especificar que en ./runs/{nombre_quequiera_darle_a_la_carpeta} aunque se reanude se debe especificar esto.
-
-### **_--dump_** es la ruta donde el modelo se va a guardar el modelo junto a su nombre
-
-### **_--dataloader_json_** este da la ruta de los json con los datos para entrenar, evaluar, etc. termininando con la base de datos que tenemos por ejemplo **_'./JSONFiles/DDR\_'_**
-
-### **_--model_** siempre el parametro debe ser convnext para que no haya problema
-
-### Los demas parametros los puede deducir facilmente XD
