@@ -52,16 +52,18 @@ En el caso que se requiera retomar el entrenamiento de un modelos se suguiere oc
  Si se requiere entrenamiento sin los pesos de ImageNet agregar el siguiente parametro
  ```--no_pretrain```
 
-Si no hay errores no deben haber problemas, es importante que haya internet por los resultados.
+## Evaluacion 
+En dudoso caso que usted realice alguna evaluacion indivual de algun set se ocupa el siguiente script:
 
+```python3.8 main.py --eval --device 0 --load_model <ruta del modelo> --dataloader_json <especificar la ruta al igual como si se fuera a entrenar> --set <valid,test,train>```
 
-### Los demas parametros los puede deducir facilmente XD
+Los demas parametros los puede deducir facilmente XD
 
 ## Extras
 
-### Transformacion de data **_txt2json_**
+Transformacion de data **_txt2json_**
 
-### Las clases seran guardadas en un **_json_** con el siguiente formato.
+Las clases seran guardadas en un **_json_** con el siguiente formato.
 
 ```
 {
@@ -70,9 +72,9 @@ Si no hay errores no deben haber problemas, es importante que haya internet por 
 }
 ```
 
-### El nombre de estos JSON estan en el formato por ejemplo 'DDR_train.json'.
+El nombre de estos JSON estan en el formato por ejemplo 'DDR_train.json'.
 
-### Para poder generarlos se debe correr el **_main.py_** con los siguientes argumentos:
+Para poder generarlos se debe correr el **_main.py_** con los siguientes argumentos:
 
 ```
 python3.8 main.py
@@ -82,11 +84,11 @@ python3.8 main.py
 --save_json ./JSONFiles/DDR --set valid
 ```
 
-### **_--txt2json_** este aclara que se convertira el json
+**_--txt2json_** este aclara que se convertira el json
 
-### Donde **_--txt_** es la ruta del txt con la imagen y la label.
+Donde **_--txt_** es la ruta del txt con la imagen y la label.
 
-### El txt debe tener el siguiente formato
+El txt debe tener el siguiente formato
 
 ```
 nombredelaimagen etiqueta
@@ -98,8 +100,8 @@ imagen2.png 1
 .
 ```
 
-### **_--path_src_** aqui esta la ruta de las imagenes y siempre la ruta va al final sin el '/'
+**_--path_src_** aqui esta la ruta de las imagenes y siempre la ruta va al final sin el '/'
 
-### **_--save_json_** es la ruta donde se va guargar el formato debe ser **_./JSONFiles/{dataset}_** donde dataset se puede poner como en el ejemplo de arriba.
+**_--save_json_** es la ruta donde se va guargar el formato debe ser **_./JSONFiles/{dataset}_** donde dataset se puede poner como en el ejemplo de arriba.
 
-### **_--set_** se define si es **valid** ó **test** ó **train**
+**_--set_** se define si es **valid** ó **test** ó **train**
