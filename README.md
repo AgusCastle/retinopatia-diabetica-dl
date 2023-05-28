@@ -21,7 +21,7 @@ Ya listo nuestro ambiente, vamos a crear los **json**, para tener una comparacio
 
 - Despues se correra el siguiente comando para acomodar las paths correctas del servidor en cuestion. Esto se realizara una vez por cada JSON a actualizar.
 
-    ``` python3.8 main.py --data_update --path_images <ruta nueva> --json_file <Ruta JSON a actualizar>```
+    ``` python3.8 main.py --data_update --path_src <ruta nueva> --json_file <Ruta JSON a actualizar>```
 
 ## Entrenamiento
 

@@ -15,7 +15,7 @@ import os
 
 
 def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi'):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -69,7 +69,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = ConvNextSmallAB(modo='custom')
 
             if model_str == 'convnext_small_': # ConvNeXt_####
-                model = convnext_small(classes=5 , b_attn=b_attn)
+                model = convnext_small(classes=5 , b_attn=b_attn, pretrained= not no_pretrain)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
@@ -77,7 +77,8 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         hypers = {
             'lr': lr,
             'wdecay': weigth_decay,
-            'patience': patience
+            'patience': patience,
+            'version': version
         }
 
     else:

@@ -213,7 +213,16 @@ class Util():
     def savePredictionModels(filename, datas):
         with open(filename, 'w') as file:
             json.dump(datas, file)
+    
+    def updateData(path, jsonfile):
+        with open(jsonfile, 'r') as file:
+            data = json.load(file)
+        
+        for i in range(len(data['filenames']) - 1):
+            data['filenames'][i] = os.path.join(path ,str(data['filenames'][i]).split('/')[-1])
 
+        with open(jsonfile, 'w') as file:
+            json.dump(data, file)
 #Util.csv2json('/home/bringascastle/Documentos/datasets-retina/kaggle/testLabels.csv',
 #                '/home/bringascastle/Documentos/datasets-retina/kaggle/test', 'JSONFiles/eyepacs_resam/eyepacs_test.json',0, 1, '.jpeg')
 
