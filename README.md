@@ -14,6 +14,10 @@
 
 ## Datasets
 
+- EyePacs
+    - [Test](https://correoipn-my.sharepoint.com/:f:/g/personal/acastillom1701_alumno_ipn_mx/EvmvoD4j8Q1JqIsAT8z_2WwBIddsaZXTnW262oQatE3x6A?e=NhUaHT)
+    - [Train](https://correoipn-my.sharepoint.com/:f:/g/personal/acastillom1701_alumno_ipn_mx/Es2mVJwwgvxCk0DUscxFquwBmB5uErRmivoSLX8vQqjAQw?e=PReO5z)
+
 Ya listo nuestro ambiente, vamos a crear los **json**, para tener una comparacion fiel de los entrenamientos vamos a ocupar los mismos que se generaron en el servidor.
 - [Datasets EyePacs, Messidor2, DDR]() (Encuanto tenga acceso a las compus de la escuela subo esos archivos)
 
