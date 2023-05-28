@@ -144,12 +144,13 @@ class Util():
 
             print('Se ha generado el JSON en: {}'.format(path_to))
 
-    def save_checkpoint(epoch, model, optimizer, filename, model_str):
+    def save_checkpoint(epoch, model, optimizer, filename, model_str, info):
         state = {
             'str': model_str,
             'epoch': epoch,
             'model': model,
-            'optimizer': optimizer
+            'optimizer': optimizer,
+            'init': info
         }
 
         torch.save(state, filename)

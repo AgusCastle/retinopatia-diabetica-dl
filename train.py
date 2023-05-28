@@ -14,7 +14,7 @@ from eval import eval
 import os
 
 
-def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay_lr,
+def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
           batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi'):
 
     dataloader_train = DataLoader(
@@ -73,6 +73,12 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
+        
+        hypers = {
+            'lr': lr,
+            'wdecay': weigth_decay,
+            'patience': patience
+        }
 
     else:
         checkpoint = torch.load(model_load, map_location=device)
@@ -80,6 +86,7 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         start_epoch = checkpoint['epoch'] + 1
         model = checkpoint['model']
         optimizer = checkpoint['optimizer']
+        hypers = checkpoint['init']
 
         if set_lr:
             for g in optimizer.param_groups:
@@ -89,27 +96,28 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
     model = model.to(device)
 
-    data_eval = './JSONFiles/eyepacs_cab/eyepacs_'
+    data_eval = data
 
     best = 0.0
     best_dump = ''
 
     factor_lr = decay_lr
     scheduler = ReduceLROnPlateau(
-        optimizer, 'min', patience=patience, factor=factor_lr,verbose=True, min_lr= 1e-8)
+        optimizer, 'max', patience=patience, factor=factor_lr,verbose=True, min_lr= 1e-9)
     
     btt_name = ''
     if att:
         for i in b_attn:
             btt_name += str(i)
         btt_name += '1'
+        model_str += btt_name
 
     for epoch in range(start_epoch, epochs):
 
         model, loss = train_one_epoch(model, dataloader_train, optimizer,
                         criterion, epoch, device, None)
 
-        Util.save_checkpoint(epoch, model, optimizer, dump, model_str)
+        Util.save_checkpoint(epoch, model, optimizer, dump, model_str, info=hypers)
         print('Evaluando....')
 
         #eval(model, data_eval, batch_s,
@@ -118,13 +126,13 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
-        eval(model, data_eval, batch_s,
-                        workers_s, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': '-'})
+        acc = eval(model, data_eval, batch_s,
+                        workers_s, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
         
-        acc = eval(model, 'JSONFiles/eyepacs_resam/messidor2_test', batch_s,
+        eval(model, data_eval, batch_s,
                        workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
         if epoch > 15:
@@ -132,9 +140,9 @@ def train(model_str, model_load, json_result, dump: str, data, epochs, lr, decay
 
         if best < acc:
             best = acc
-            best_dump = os.path.dirname(json_result) + \
+            best_dump = os.path.dirname(dump) + \
                 '/{}_best.pth'.format(model_str)
-            Util.save_checkpoint(epoch, model, optimizer, best_dump, model_str)
+            Util.save_checkpoint(epoch, model, optimizer, best_dump, model_str, hypers)
 
 
 def train_one_epoch(model, dataloader, optimizer: torch.optim.Adam, criterion, epoch, device, json_result):

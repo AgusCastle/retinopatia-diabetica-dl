@@ -1,38 +1,22 @@
-from statistics import mode
 import torch
 from torch.utils.data import DataLoader
 from data.drdataset import DrDataset
 from tqdm import tqdm
-from sklearn.metrics import accuracy_score, precision_score, confusion_matrix
 from utils.save_info import Util
 from pathlib import Path
 from utils.metrics import MericsEvaluation
 from utils.services.google_service import GoogleService
+import re
 
-
-def bestEpoch(model_load: str, set = 'valid',devicef = 1, filename = None):
+def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/messidor2_', set : str = 'test',devicef = 1):
 
     device = torch.device(devicef)
-
     checkpoint = torch.load(model_load, map_location=device)
 
-    epoch = checkpoint['epoch']
-    model = checkpoint['model']
+    epoch, model = checkpoint['epoch'], checkpoint['model']
     model.to(device)
-
-    print('Ultima epoca: {}'.format(epoch))
-    eval(model, 'JSONFiles/messidor2/messidor2_', 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': 'eyepacs'})
-    #mc, acc, dicta = eval(model, 'JSONFiles/kaggle/kaggle_', 1, 1, devicef, set, True)
-    '''
-    if filename is not None:
-        Util.guardarPrediction(filename, {
-            'epoca' : epoch,
-            'set'    : set,
-            'acc_champ' : acc,
-            'matriz' : mc,
-            'clases' : dicta
-        })
-    '''
+    
+    eval(model, dataloader , 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
 
 def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
     
@@ -184,4 +168,10 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
     # return cfm, (champ / 5) * 100, list_acc
 
     
-    
+def getDataset(cadena):
+    patron = r"/([^/]+)/"
+    coincidencias = re.findall(patron, cadena)
+    if coincidencias:
+        return coincidencias[0]
+    else:
+        return None

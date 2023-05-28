@@ -1,11 +1,24 @@
 import argparse
 import os
 from sys import exit
-from eval import eval, bestEpoch, generateMatrix_evals
+from eval import eval, evalModelOneDataset, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
 
+MODELS = ['resnet50_abs', 
+          'resnet50', 
+          'convnext_custom', 
+          'resnet', 
+          'convnext', 
+          'resnet_custom', 
+          'resnet_abs_custom', 
+          'resnet_abs', 
+          'convnext_abs_original', 
+          'convnext_abs_custom', 
+          'convnext_small_', 
+          'densenet121', 
+          'resnext50']
 
 if __name__ == '__main__':
 
@@ -19,7 +32,11 @@ if __name__ == '__main__':
     parser.add_argument('--eval', action='store_true', default=False)
     parser.add_argument('--gradcam', action='store_true', default=False)
     parser.add_argument('--matrix', action='store_true', default= False)
-    # python3.8 main.py --train --epochs 30 --lr 0.00001 --decay_lr 0.3 --batch 8 --workers 8 --momentum 0.9 --device 0 --patience 3 --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --dump ./runs3/convnext_1001_1_eyepacs/convnext_1001.pth --json_result ./runs3/convnext_1001_1_eyepacs/results.json 
+    # python3.8 main.py --train --epochs 30 --lr 0.00001 --decay_lr 0.3 --batch 8 --workers 8 
+    # --device 0 --patience 3 --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ 
+    # --dump ./runs3/convnext_1001_1_eyepacs/convnext_1001.pth 
+    # --json_result ./runs3/convnext_1001_1_eyepacs/results.json
+    # --att --attn_block 1 0 0
     # Acciones para el dataset
     parser.add_argument('--csv2json', action='store_true', default=False)
     parser.add_argument('--txt2json', action='store_true', default=False)
@@ -55,51 +72,47 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # Visualizaciones GradCAM
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)
 
+    # Evaluaciones para la SNF
     if args.matrix and args.load_model is not None:
         generateMatrix_evals(str(args.load_model), args.set, args.device, filename=args.json_result)
         exit()
 
-    if args.eval and args.load_model is not None:
-        bestEpoch(str(args.load_model), args.set, args.device, filename=args.json_result)
+    # Evaluaciones para modelos individuales con un solo conjunto de datos
+    if args.eval and args.load_model is not None and args.dataloader_json is not None:
+        evalModelOneDataset(str(args.load_model), str(args.dataloader_json), args.set, args.device)
 
+    # Crea la carpeta donde se guardaran los pesos.
     if not os.path.exists('./runs'):
         os.makedirs('./runs', exist_ok=True)
 
+    # Crea la carpeta donde se guardaran los Dataloaders
     if not os.path.exists('./JSONFiles'):
         os.makedirs('./JSONFiles', exist_ok=True)
 
+    # Opcion para generar un dataloader de un txt a json
     if args.txt2json:
         if args.txt is None or args.path_src is None:
             exit()
         Util.txt2json(args.txt, args.path_src, args.save_json, args.set)
         exit()
 
+    # Entrenamiento de los modelos
     if args.train:
 
-        if args.model is None or args.model not in ['resnet50_abs', 'resnet50', 'convnext_custom', 'resnet', 'convnext', 'resnet_custom', 'resnet_abs_custom', 'resnet_abs', 'convnext_abs_original', 'convnext_abs_custom', 'convnext_small_', 'densenet121', 'resnext50']:
+        if args.model is None or args.model not in MODELS:
             print('Elige un modelo a entrenar')
             exit()
-
-        json_result = args.json_result
-        if args.json_result is not None and False:
-            
-
-            if not os.path.exists(json_result):
-                os.makedirs(str(os.path.dirname(json_result)), exist_ok=True)
-
-            if not os.path.exists(args.json_result):
-                Util.generarJSON(json_result)
-            if not os.path.exists(os.path.dirname(
-                    args.json_result) + '/info_train_{}.json'.format(args.model)):
-                Util.createInfoXepoch(os.path.dirname(
-                    args.json_result) + '/info_train_{}.json'.format(args.model))
             
         if args.dump is None:
-            print('Elije donde guardar tu modelo')
+            print('Elije donde guardar tus modelos')
             exit()
+        else:
+            if not os.path.exists(os.path.dirname(args.dump)):
+                os.makedirs(os.path.dirname(args.dump))
 
         dump = args.dump
 
@@ -116,6 +129,6 @@ if __name__ == '__main__':
 
         model_load = args.load_model
 
-        train(args.model, model_load, json_result, dump,
+        train(args.model, model_load, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 4,
               workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode, att=args.att)

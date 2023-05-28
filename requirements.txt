@@ -30,7 +30,6 @@ packaging==23.0
 pandas==2.0.1
 peewee==3.15.3
 Pillow==9.2.0
-pkg_resources==0.0.0
 ply==3.11
 protobuf==4.22.3
 psycopg2-binary==2.9.4
