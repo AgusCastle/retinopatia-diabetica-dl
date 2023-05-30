@@ -32,12 +32,7 @@ Ya listo nuestro ambiente, vamos a crear los **json**, para tener una comparacio
 ### Para entrenar se utiliza el siguiente comando
 
 ```
-python3.8 main.py --train --epochs 10 --batch 8 --workers 8 --device 0 
---convnext_small_
---dataloader_json ./JSONFiles/DDR_
---lr 0.00002 decay_lr 0.3 --patience 3 --att --attn_block 0 0 1
---dump ./runs/ConvNeXt_0011/ConvNext_0011.pth
---version 1 
+python3.8 main.py --train --epochs 10 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.001 --decay_lr 0.3 --patience 3 --att --attn_block 1 0 1 --dump ./runs4/ConvNeXt_1011_9010/ConvNext_1011.pth --version 2 --no_pretrain
 ```
 
 **_--dump_** es la ruta donde el modelo se va a guardar el modelo junto a su nombre
