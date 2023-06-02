@@ -5,7 +5,7 @@ from tqdm import tqdm
 from utils.save_info import Util
 from pathlib import Path
 from utils.metrics import MericsEvaluation
-from utils.services.google_service import GoogleService
+#from utils.services.google_service import GoogleService
 import re
 
 def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/messidor2_', set : str = 'test',devicef = 1):
