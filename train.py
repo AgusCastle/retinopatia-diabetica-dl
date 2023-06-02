@@ -136,7 +136,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         eval(model, data_eval, batch_s,
                        workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
-        if epoch > 15:
+        if epoch > 10:
             scheduler.step(acc)
 
         if best < acc:
