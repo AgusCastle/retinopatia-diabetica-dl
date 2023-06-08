@@ -17,8 +17,8 @@ def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/
     model.to(device)
     print('Especificaciones del Modelo')
     print(checkpoint['init'])
-    print('Ultima epoca: {}'.format(epoch))
-    eval(model, dataloader , 4, 4, devicef, set, True, {'modelo': checkpoint['str'], 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
+    print('Ultima epoca: {} -> {}'.format(epoch, checkpoint['str']))
+    eval(model, dataloader , 4, 4, devicef, set, True, {'modelo': "{}_{}".format(checkpoint['str'], checkpoint['init']['version']), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
 
 def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
     

@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('--train', action='store_true', default=False)
     parser.add_argument('--mode', type=str, default='multi')
     parser.add_argument('--model', default=None)
-    parser.add_argument('--att', required=True, action='store_true', default=False)
+    parser.add_argument('--att',  action='store_true', default=False)
     parser.add_argument('--eval', action='store_true', default=False)
     parser.add_argument('--gradcam', action='store_true', default=False)
     parser.add_argument('--matrix', action='store_true', default= False)
