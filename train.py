@@ -133,8 +133,8 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
         
-        eval(model, data_eval, batch_s,
-                       workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
+        #eval(model, data_eval, batch_s,
+        #               workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
         if epoch > 15:
             scheduler.step(acc)
