@@ -5,7 +5,7 @@ from tqdm import tqdm
 from utils.save_info import Util
 from pathlib import Path
 from utils.metrics import MericsEvaluation
-#from utils.services.google_service import GoogleService
+from utils.services.google_service import GoogleService
 import re
 
 def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/messidor2_', set : str = 'test',devicef = 1):
@@ -120,11 +120,11 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
         process_bar.set_description_str('Set: {}'.format(set), True)
 
     evals = MericsEvaluation(preds, trues, set)
-    #gs = GoogleService()
+    gs = GoogleService()
     info_r = [info['modelo'], info['epoca'], info['dataset'], info['loss'], set]
     info_r.extend(evals.getall())
     
-    #gs.insertRowToSheet(info_r)
+    gs.insertRowToSheet(info_r)
     return evals.class_accuracy()
 
     # if not save:
