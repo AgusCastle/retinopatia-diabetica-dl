@@ -8,6 +8,7 @@ from models.resnet50 import resNet50Custom
 from models.resnext50 import resNeXt50_agus
 from models.densenet121 import denseNet121_agus
 from models.convnext_small import convnext_small
+from models.hornet import hornet_small_gf_agus
 from tqdm import tqdm
 from utils.save_info import Util
 from eval import eval
@@ -70,6 +71,9 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
 
             if model_str == 'convnext_small_': # ConvNeXt_####
                 model = convnext_small(classes=5 , b_attn=b_attn, pretrained= not no_pretrain)
+            
+            if model_str == 'hornet':
+                model = hornet_small_gf_agus(pretrained_path='hornet/hornet_small_gf.pth',pretrained=True, classes=5)
 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
@@ -127,8 +131,8 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
-        acc = eval(model, data_eval, batch_s,
-                        workers_s, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
+        acc = eval(model, data_eval, 2,
+                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')

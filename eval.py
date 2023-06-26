@@ -8,7 +8,7 @@ from utils.metrics import MericsEvaluation
 from utils.services.google_service import GoogleService
 import re
 
-def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/messidor2_', set : str = 'test',devicef = 1):
+def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/messidor2_', set : str = 'test',devicef = 1, message= None):
 
     device = torch.device(devicef)
     checkpoint = torch.load(model_load, map_location=device)
@@ -18,7 +18,7 @@ def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/
     print('Especificaciones del Modelo')
     print(checkpoint['init'])
     print('Ultima epoca: {} -> {}'.format(epoch, checkpoint['str']))
-    eval(model, dataloader , 4, 4, devicef, set, True, {'modelo': "{}_{}".format(checkpoint['str'], checkpoint['init']['version']), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
+    eval(model, dataloader , 2, 2, devicef, set, True, {'modelo': "{}_{}".format(checkpoint['str'], checkpoint['init']['version'], message), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
 
 def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
     
@@ -30,7 +30,7 @@ def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = 
     model = checkpoint['model']
     model.to(device)
     print('Modelo: {}, en la epoca: {} '.format(Path(model_load).name, epoch))
-    eval_to_vector(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, filename, Path(model_load).name)
+    eval_to_vector(model, 'JSONFiles/eyepacs_resam/eyepacs_', 1, 1, devicef, set, filename, Path(model_load).name)
 
 def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name):
 
@@ -40,12 +40,12 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         num_workers=workers,shuffle=False
     ) 
 
-    if name == 'convnext_ab_agus.pth':
-        model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    elif name == 'convnext_agus.pth':
-        model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    else:
-        model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # if name == 'convnext_ab_agus.pth':
+    #     model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # elif name == 'convnext_small_0000_best.pth':
+    #     model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # else:
+    #     model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
 
     model.eval()
 
@@ -61,12 +61,6 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         label = label.to(device)
 
         pred = model(image)
-
-        if int(label) != int(torch.argmax(pred[0])):
-            
-            print(int(torch.argmax(pred[0])))
-            print(f[0])
-            print(int(label))
 
         for indv in pred.tolist():
             contains = getContainsDict(list_pred, f[0])
@@ -86,7 +80,7 @@ def getContainsDict(array, filename):
             return i
     return -1
 
-def eval(model, data: str, batch: int, workers: int, device: str, set: str, test: bool = False, info : dict = {}):
+def eval(model, data: str, batch: int, workers: int, device: str, set: str, test: bool = False, info : dict = {}, message= None):
 
     if test:
         dataloader = DataLoader(
@@ -115,15 +109,22 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
         label = label.to(device)
 
         pred = model(image)
-        preds.extend(torch.argmax(pred, dim=1).tolist())
-        trues.extend(label.tolist())
-        process_bar.set_description_str('Set: {}'.format(set), True)
 
+        try:
+            trues.extend(label.tolist())
+            preds.extend(torch.argmax(pred, dim=1).tolist())
+        except:
+            preds.append(int(torch.argmax(pred, dim=1)))
+            trues.append(int(label))
+
+        process_bar.set_description_str('Set: {}'.format(set), True)
+        
     evals = MericsEvaluation(preds, trues, set)
     gs = GoogleService()
     info_r = [info['modelo'], info['epoca'], info['dataset'], info['loss'], set]
     info_r.extend(evals.getall())
-    
+    if message is not None:
+        gs.insertRowToSheet([message])
     gs.insertRowToSheet(info_r)
     return evals.class_accuracy()
 

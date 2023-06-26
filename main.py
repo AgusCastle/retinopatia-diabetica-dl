@@ -5,6 +5,7 @@ from eval import eval, evalModelOneDataset, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
+from models.sparse import trainEval
 
 MODELS = ['resnet50_abs', 
           'resnet50', 
@@ -18,7 +19,8 @@ MODELS = ['resnet50_abs',
           'convnext_abs_custom', 
           'convnext_small_', 
           'densenet121', 
-          'resnext50']
+          'resnext50',
+          'hornet']
 
 if __name__ == '__main__':
 
@@ -71,21 +73,31 @@ if __name__ == '__main__':
 
     parser.add_argument('--category', type=int, default=0)
     parser.add_argument('--attn_block', nargs='+', type=int)
+    parser.add_argument('--msg', type=str, default='N/A')
+
+    # Entrenamiento SNF
+
+    parser.add_argument('--snf_train', action='store_true', default=False)
+    parser.add_argument('--snf_eval', action='store_true', default=False)
 
     args = parser.parse_args()
 
+    if args.snf_train:
+        trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)
+        exit()
+        
     # Visualizaciones GradCAM
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)
 
     # Evaluaciones para la SNF
     if args.matrix and args.load_model is not None:
-        generateMatrix_evals(str(args.load_model), args.set, args.device, filename=args.json_result)
+        generateMatrix_evals(str(args.load_model), args.set, args.device, filename=args.msg)
         exit()
 
     # Evaluaciones para modelos individuales con un solo conjunto de datos
     if args.eval and args.load_model is not None and args.dataloader_json is not None:
-        evalModelOneDataset(str(args.load_model), str(args.dataloader_json), args.set, args.device)
+        evalModelOneDataset(str(args.load_model), str(args.dataloader_json), args.set, args.device, args.msg)
 
     # Crea la carpeta donde se guardaran los pesos.
     if not os.path.exists('./runs'):
