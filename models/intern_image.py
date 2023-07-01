@@ -477,10 +477,7 @@ class InternImageBlock(nn.Module):
         self.depth = depth
         self.post_norm = post_norm
         self.center_feature_scale = center_feature_scale
-        if cab:
-            self.att = BlockAttencionCAB(channels, 5, 5)
-        self.cab = cab
-        self.blocks = nn.ModuleList([
+        baux = [
             InternImageLayer(
                 core_op=core_op,
                 channels=channels,
@@ -500,7 +497,12 @@ class InternImageBlock(nn.Module):
                 center_feature_scale=center_feature_scale, # for InternImage-H/G
                 remove_center = remove_center,  # for InternImage-H/G
         ) for i in range(depth)
-        ].append(self.att))
+        ]
+
+        if cab:
+            baux.append(BlockAttencionCAB(channels, 5, 5))
+
+        self.blocks = nn.ModuleList(baux)
         if not self.post_norm or center_feature_scale:
             self.norm = build_norm_layer(channels, 'LN')
         self.post_norm_block_ids = post_norm_block_ids
