@@ -683,7 +683,7 @@ class InternImage(nn.Module):
                 clip_embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         
         if cab[-1]:
-            self.cabf = AttnCABfc(int(channels * 2**3), 5, 5)
+            self.cabf = AttnCABfc(960, 5, 5)
         else:
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.num_layers = len(depths)
