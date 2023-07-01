@@ -502,6 +502,7 @@ class InternImageBlock(nn.Module):
         if cab:
             baux.append(BlockAttencionCAB(channels, 5, 5))
 
+        self.cab = cab
         self.blocks = nn.ModuleList(baux)
         if not self.post_norm or center_feature_scale:
             self.norm = build_norm_layer(channels, 'LN')
@@ -516,7 +517,12 @@ class InternImageBlock(nn.Module):
 
     def forward(self, x, return_wo_downsample=False):
         for i, blk in enumerate(self.blocks):
-            x = blk(x)
+            if i == len(self.blocks) -1 and self.cab:
+                x = torch.permute(x,[0,3,1,2])
+                x = blk(x)
+                x = torch.permute(x,[0,2,3,1])
+            else:
+                x = blk(x)
             if (self.post_norm_block_ids is not None) and (i in self.post_norm_block_ids):
                 index = self.post_norm_block_ids.index(i)
                 x = self.post_norms[index](x) # for InternImage-H/G
