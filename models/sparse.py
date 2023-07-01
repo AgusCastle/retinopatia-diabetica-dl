@@ -34,7 +34,7 @@ class SparseFusion(nn.Module):
         x = torch.mul(x, self.W2)
         return self.softmax(x)
 
-def eval(model, device, set = 'valid', flag = False, messidor=False, savename=''):
+def eval(model, device, set = 'test', flag = False, messidor=False, savename=''):
     
     model = model.eval()
     model = model.to(device)
@@ -60,7 +60,7 @@ def eval(model, device, set = 'valid', flag = False, messidor=False, savename=''
         x = model(matrix)
         pred.extend(int(torch.argmax(tensor)) for tensor in x)
 
-    metrics = MericsEvaluation(pred, gt, 'valid')
+    metrics = MericsEvaluation(pred, gt, 'test')
 
     if flag:
         gs = GoogleService()
@@ -70,11 +70,16 @@ def eval(model, device, set = 'valid', flag = False, messidor=False, savename=''
         else:
             info_r = [savename, '-', 'eyepacs', '-', set]
         info_r.extend(metrics.getall())
+        gs.insertRowToSheet(info_r)
 
-        if metrics.class_accuracy() > 0.62 and not messidor and set=='test':
-            gs.insertRowToSheet(info_r)
     return metrics.class_accuracy()
     
+def evalSnf(load_model, device):
+    
+    device = torch.device(device)
+    model = torch.load(load_model, map_location=device)['model']
+
+    eval(model, device, 'test', True, True, load_model)
 
 def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, device=1, save_name='SNF', evals=False, path_model=''):
 

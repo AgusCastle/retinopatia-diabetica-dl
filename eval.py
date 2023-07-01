@@ -30,7 +30,7 @@ def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = 
     model = checkpoint['model']
     model.to(device)
     print('Modelo: {}, en la epoca: {} '.format(Path(model_load).name, epoch))
-    eval_to_vector(model, 'JSONFiles/eyepacs_resam/eyepacs_', 1, 1, devicef, set, filename, Path(model_load).name)
+    eval_to_vector(model, 'JSONFiles/messidor2/messidor2_', 1, 1, devicef, set, filename, Path(model_load).name)
 
 def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name):
 

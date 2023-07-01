@@ -5,7 +5,7 @@ from eval import eval, evalModelOneDataset, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
-from models.sparse import trainEval
+from models.sparse import trainEval, evalSnf
 
 MODELS = ['resnet50_abs', 
           'resnet50', 
@@ -20,7 +20,8 @@ MODELS = ['resnet50_abs',
           'convnext_small_', 
           'densenet121', 
           'resnext50',
-          'hornet']
+          'hornet', 
+          'internimage']
 
 if __name__ == '__main__':
 
@@ -86,6 +87,9 @@ if __name__ == '__main__':
         trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)
         exit()
         
+    if args.snf_eval:
+        evalSnf(args.load_model, args.device)
+        exit()
     # Visualizaciones GradCAM
     if args.gradcam:
         viewGradCam(args.load_model, args.category, args.img_path, args.device)

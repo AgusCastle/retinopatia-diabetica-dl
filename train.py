@@ -9,6 +9,7 @@ from models.resnext50 import resNeXt50_agus
 from models.densenet121 import denseNet121_agus
 from models.convnext_small import convnext_small
 from models.hornet import hornet_small_gf_agus
+from models.intern_image import interImageSmallCustom
 from tqdm import tqdm
 from utils.save_info import Util
 from eval import eval
@@ -74,7 +75,9 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
             
             if model_str == 'hornet':
                 model = hornet_small_gf_agus(pretrained_path='hornet/hornet_small_gf.pth',pretrained=True, classes=5)
-
+            
+            if model_str == 'internimage':
+                model = interImageSmallCustom(5)    
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
         
