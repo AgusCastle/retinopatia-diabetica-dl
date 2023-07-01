@@ -500,7 +500,7 @@ class InternImageBlock(nn.Module):
                 center_feature_scale=center_feature_scale, # for InternImage-H/G
                 remove_center = remove_center,  # for InternImage-H/G
         ) for i in range(depth)
-        ])
+        ].append(self.att))
         if not self.post_norm or center_feature_scale:
             self.norm = build_norm_layer(channels, 'LN')
         self.post_norm_block_ids = post_norm_block_ids
@@ -523,8 +523,6 @@ class InternImageBlock(nn.Module):
         if return_wo_downsample:
             x_ = x
         if self.downsample is not None:
-            if self.cab:
-                x = self.att(x)
             x = self.downsample(x)
 
         if return_wo_downsample:
