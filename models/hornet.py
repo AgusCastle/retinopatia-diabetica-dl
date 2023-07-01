@@ -163,7 +163,7 @@ class HorNet(nn.Module):
                 layer_scale_init_value=layer_scale_init_value, gnconv=gnconv[i]) for j in range(depths[i])]            
             
             if cab[i] and i != 3:
-                list_stages.append(BlockAttencionCAB(dims[i]))
+                list_stages.append(BlockAttencionCAB(dims[i], 5, 5))
 
             stage = nn.Sequential(*list_stages)
 
@@ -416,6 +416,7 @@ def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kw
         partial(gnconv, order=4, s=s, h=14, w=8, gflayer=GlobalLocalFilter),
         partial(gnconv, order=5, s=s, h=7, w=4, gflayer=GlobalLocalFilter),
     ],
+    cab=att,
     **kwargs
     )
 
