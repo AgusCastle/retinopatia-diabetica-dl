@@ -470,14 +470,15 @@ class InternImageBlock(nn.Module):
                  res_post_norm=False, # for InternImage-H/G
                  center_feature_scale=False, # for InternImage-H/G
                  remove_center=False,  # for InternImage-H/G
-                 cab = 0
+                 cab = False
                  ):
         super().__init__()
         self.channels = channels
         self.depth = depth
         self.post_norm = post_norm
         self.center_feature_scale = center_feature_scale
-        self.att = BlockAttencionCAB(channels, 5, 5)
+        if cab:
+            self.att = BlockAttencionCAB(channels, 5, 5)
         self.cab = cab
         self.blocks = nn.ModuleList([
             InternImageLayer(
@@ -595,15 +596,15 @@ class InternImage(nn.Module):
         self.use_clip_projector = use_clip_projector
         self.level2_post_norm_block_ids = level2_post_norm_block_ids
         self.remove_center = remove_center
-
-        print(f'using core type: {core_op}')
-        print(f'using activation layer: {act_layer}')
-        print(f'using main norm layer: {norm_layer}')
-        print(f'using dpr: {drop_path_type}, {drop_path_rate}')
-        print(f"level2_post_norm: {level2_post_norm}")
-        print(f"level2_post_norm_block_ids: {level2_post_norm_block_ids}")
-        print(f"res_post_norm: {res_post_norm}")
-        print(f"remove_center: {remove_center}")
+        self.cab = cab
+        # print(f'using core type: {core_op}')
+        # print(f'using activation layer: {act_layer}')
+        # print(f'using main norm layer: {norm_layer}')
+        # print(f'using dpr: {drop_path_type}, {drop_path_rate}')
+        # print(f"level2_post_norm: {level2_post_norm}")
+        # print(f"level2_post_norm_block_ids: {level2_post_norm_block_ids}")
+        # print(f"res_post_norm: {res_post_norm}")
+        # print(f"remove_center: {remove_center}")
 
         in_chans = 3
         self.patch_embed = StemLayer(in_chans=in_chans,
@@ -643,6 +644,7 @@ class InternImage(nn.Module):
                 res_post_norm=res_post_norm, # for InternImage-H/G
                 center_feature_scale=center_feature_scale, # for InternImage-H/G
                 remove_center=remove_center,  # for InternImage-H/G
+                cab=(i < self.num_levels - 1 and self.cab[i] == 1)
             )
             self.levels.append(level)
         
@@ -678,7 +680,10 @@ class InternImage(nn.Module):
             self.fc_norm = build_norm_layer(clip_embed_dim, norm_layer, eps=1e-6)
             self.head = nn.Linear(
                 clip_embed_dim, num_classes) if num_classes > 0 else nn.Identity()
-            
+        
+        if cab[-1]:
+            self.cabf = AttnCABfc(int(channels * 2**4), 5, 5)
+
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.num_layers = len(depths)
         self.apply(self._init_weights)
@@ -724,6 +729,17 @@ class InternImage(nn.Module):
         lr_ratios["levels.2.norm"] = lr_ratios['levels.3.blocks.0.']
         return lr_ratios
 
+    def forward_features_cab_fc(self, x):
+        x = self.patch_embed(x)
+        x = self.pos_drop(x)
+
+        for level in self.levels:
+            x = level(x)
+
+        x = self.conv_head(x.permute(0, 3, 1, 2))
+        x = self.cabf(x)
+        return x
+    
     def forward_features(self, x):
         x = self.patch_embed(x)
         x = self.pos_drop(x)
@@ -770,7 +786,10 @@ class InternImage(nn.Module):
         if self.use_clip_projector: # for InternImage-H/G
             x = self.forward_clip_projector(x)
         else: # for InternImage-T/S/B/L/XL
-            x = self.forward_features(x)
+            if self.cab[-1]:
+                return self.forward_features_cab_fc(x)
+            else:
+                x = self.forward_features(x)
         x = self.head(x)
         return x
 
