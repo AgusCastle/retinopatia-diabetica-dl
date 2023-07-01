@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from timm.models.layers import trunc_normal_, DropPath
 from timm.models.registry import register_model
 import torch.fft
+from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 def get_dwconv(dim, kernel, bias):
     return nn.Conv2d(dim, dim, kernel_size=kernel, padding=(kernel-1)//2 ,bias=bias, groups=dim)
@@ -127,11 +128,12 @@ class HorNet(nn.Module):
     def __init__(self, in_chans=3, num_classes=1000, 
                  depths=[3, 3, 9, 3], base_dim=96, drop_path_rate=0.,
                  layer_scale_init_value=1e-6, head_init_scale=1.,
-                 gnconv=gnconv, block=Block, uniform_init=False, **kwargs
+                 gnconv=gnconv, block=Block, uniform_init=False, cab=[0,0,0,0],**kwargs
                  ):
         super().__init__()
-        dims = [base_dim, base_dim*2, base_dim*4, base_dim*8]
 
+        dims = [base_dim, base_dim*2, base_dim*4, base_dim*8]
+        self.cab = cab
         self.downsample_layers = nn.ModuleList() # stem and 3 intermediate downsampling conv layers
         stem = nn.Sequential(
             nn.Conv2d(in_chans, dims[0], kernel_size=4, stride=4),
@@ -157,21 +159,27 @@ class HorNet(nn.Module):
 
         cur = 0
         for i in range(4):
-            stage = nn.Sequential(
-                *[block(dim=dims[i], drop_path=dp_rates[cur + j], 
-                layer_scale_init_value=layer_scale_init_value, gnconv=gnconv[i]) for j in range(depths[i])]
-            )
+            list_stages = [block(dim=dims[i], drop_path=dp_rates[cur + j], 
+                layer_scale_init_value=layer_scale_init_value, gnconv=gnconv[i]) for j in range(depths[i])]            
+            
+            if cab[i] and i != 3:
+                list_stages.append(BlockAttencionCAB(dims[i]))
+
+            stage = nn.Sequential(*list_stages)
+
             self.stages.append(stage)
             cur += depths[i]
-
-        self.norm = nn.LayerNorm(dims[-1], eps=1e-6) # final norm layer
-        self.head = nn.Linear(dims[-1], num_classes)
+        
+        if cab[-1]:
+            self.att = AttnCABfc(dims[-1], 5, 5)
+        else:
+            self.norm = nn.LayerNorm(dims[-1], eps=1e-6) # final norm layer
+            self.head = nn.Linear(dims[-1], num_classes)
+            self.head.weight.data.mul_(head_init_scale)
+            self.head.bias.data.mul_(head_init_scale)
 
         self.uniform_init = uniform_init
-
         self.apply(self._init_weights)
-        self.head.weight.data.mul_(head_init_scale)
-        self.head.bias.data.mul_(head_init_scale)
 
     def _init_weights(self, m):
         if not self.uniform_init:
@@ -190,10 +198,15 @@ class HorNet(nn.Module):
             x = self.downsample_layers[i](x)
             for j, blk in enumerate(self.stages[i]):
                     x = blk(x)
+        if self.cab[-1]:
+            return x
         return self.norm(x.mean([-2, -1])) # global average pooling, (N, C, H, W) -> (N, C)
 
     def forward(self, x):
         x = self.forward_features(x)
+        if self.cab[-1]:
+            x = self.att(x)
+            return x
         x = self.head(x)
         return x
 
@@ -391,4 +404,21 @@ def hornet_small_gf_agus(pretrained_path='',in_22k=False, classes = 1000,**kwarg
     model.head = head
 
     
+    return model
+
+@register_model
+def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kwargs):
+    s = 1.0/3.0
+    model = HorNet(depths=[2, 3, 18, 2],num_classes=1000 ,base_dim=96, block=Block,
+    gnconv=[
+        partial(gnconv, order=2, s=s),
+        partial(gnconv, order=3, s=s),
+        partial(gnconv, order=4, s=s, h=14, w=8, gflayer=GlobalLocalFilter),
+        partial(gnconv, order=5, s=s, h=7, w=4, gflayer=GlobalLocalFilter),
+    ],
+    **kwargs
+    )
+
+    model.load_state_dict(torch.load(pretrained_path, map_location=torch.device(0))['model'], False)
+
     return model
