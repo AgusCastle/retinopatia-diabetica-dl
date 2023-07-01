@@ -657,7 +657,8 @@ class InternImage(nn.Module):
                 build_norm_layer(int(self.num_features * cls_scale), 'BN',
                                  'channels_first', 'channels_first'),
                 build_act_layer(act_layer))
-            self.head = nn.Linear(int(self.num_features * cls_scale), num_classes) \
+            if not cab[-1]:
+                self.head = nn.Linear(int(self.num_features * cls_scale), num_classes) \
                 if num_classes > 0 else nn.Identity()
         else: # for InternImage-H/G
             pretrain_embed_dim, _stride, attnpool_num_heads, clip_embed_dim = 1024, 2, 16, 768
@@ -682,9 +683,9 @@ class InternImage(nn.Module):
                 clip_embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         
         if cab[-1]:
-            self.cabf = AttnCABfc(int(channels * 2**4), 5, 5)
-
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+            self.cabf = AttnCABfc(int(channels * 2**3), 5, 5)
+        else:
+            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.num_layers = len(depths)
         self.apply(self._init_weights)
         self.apply(self._init_deform_weights)
