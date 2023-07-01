@@ -10,6 +10,7 @@ import torch.utils.checkpoint as checkpoint
 from timm.models.layers import trunc_normal_, DropPath
 from models.ops_dcnv3 import modules as opsm
 import torch.nn.functional as F
+from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 
 class to_channels_first(nn.Module):
@@ -469,13 +470,15 @@ class InternImageBlock(nn.Module):
                  res_post_norm=False, # for InternImage-H/G
                  center_feature_scale=False, # for InternImage-H/G
                  remove_center=False,  # for InternImage-H/G
+                 cab = 0
                  ):
         super().__init__()
         self.channels = channels
         self.depth = depth
         self.post_norm = post_norm
         self.center_feature_scale = center_feature_scale
-
+        self.att = BlockAttencionCAB(channels, 5, 5)
+        self.cab = cab
         self.blocks = nn.ModuleList([
             InternImageLayer(
                 core_op=core_op,
@@ -504,6 +507,7 @@ class InternImageBlock(nn.Module):
             self.post_norms = nn.ModuleList(
                 [build_norm_layer(channels, 'LN', eps=1e-6) for _ in post_norm_block_ids]
             )
+        
         self.downsample = DownsampleLayer(
             channels=channels, norm_layer=norm_layer) if downsample else None
 
@@ -518,6 +522,8 @@ class InternImageBlock(nn.Module):
         if return_wo_downsample:
             x_ = x
         if self.downsample is not None:
+            if self.cab:
+                x = self.att(x)
             x = self.downsample(x)
 
         if return_wo_downsample:
@@ -568,6 +574,7 @@ class InternImage(nn.Module):
                  post_norm=False,
                  cls_scale=1.5,
                  with_cp=False,
+                 cab = [0,0,0,0],
                  dw_kernel_size=None, # for InternImage-H/G
                  use_clip_projector=False, # for InternImage-H/G
                  level2_post_norm=False, # for InternImage-H/G
@@ -792,5 +799,23 @@ def interImageSmallCustom(classes):
                 nn.Linear(2048, classes),
                 nn.LogSoftmax(dim=1))
     model.head = head
+    
+    return model
+
+def internImageSmallCAB(classes, att = [0, 0, 0, 1]):
+    model = InternImage(
+            core_op='DCNv3',
+            num_classes=1000,
+            channels=80,
+            depths=[4,4,21,4],
+            groups=[5, 10, 20, 40],
+            layer_scale=1e-5,
+            offset_scale=1.0,
+            post_norm=True,
+            mlp_ratio=4.0,
+            with_cp=False,
+            cab=att
+        )
+    model.load_state_dict(torch.load('pretrain/internimage/internimage_s_1k_224.pth', map_location=torch.device(0))['model'], strict=False)
     
     return model
