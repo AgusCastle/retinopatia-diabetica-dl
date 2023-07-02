@@ -21,7 +21,9 @@ MODELS = ['resnet50_abs',
           'densenet121', 
           'resnext50',
           'hornet', 
-          'internimage']
+          'internimage',
+          'hornet_',
+          'internimage_']
 
 if __name__ == '__main__':
 

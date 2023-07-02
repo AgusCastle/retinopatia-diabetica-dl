@@ -409,7 +409,7 @@ def hornet_small_gf_agus(pretrained_path='',in_22k=False, classes = 1000,**kwarg
 @register_model
 def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kwargs):
     s = 1.0/3.0
-    model = HorNet(depths=[2, 3, 18, 2],num_classes=1000 ,base_dim=96, block=Block,
+    model = HorNet(depths=[2, 3, 18, 2],num_classes=classes ,base_dim=96, block=Block,
     gnconv=[
         partial(gnconv, order=2, s=s),
         partial(gnconv, order=3, s=s),
