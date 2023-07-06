@@ -6,6 +6,7 @@ from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
 from models.sparse import trainEval, evalSnf
+from utils.info_models import infoModels
 
 MODELS = ['resnet50_abs', 
           'resnet50', 
@@ -86,8 +87,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.general_info:
-        pass
-
+        infoModels(modelo=args.model, version=args.attn_block)
+        exit()
     if args.snf_train:
         trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)
         exit()
