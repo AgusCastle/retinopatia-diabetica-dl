@@ -30,7 +30,7 @@ def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = 
     model = checkpoint['model']
     model.to(device)
     print('Modelo: {}, en la epoca: {} '.format(Path(model_load).name, epoch))
-    eval_to_vector(model, 'JSONFiles/messidor2/messidor2_', 1, 1, devicef, set, filename, Path(model_load).name)
+    eval_to_vector(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, filename, Path(model_load).name)
 
 def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name):
 
@@ -40,12 +40,12 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         num_workers=workers,shuffle=False
     ) 
 
-    # if name == 'convnext_ab_agus.pth':
-    #     model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    # elif name == 'convnext_small_0000_best.pth':
-    #     model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    # else:
-    #     model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    if name == 'convnext_ab_agus.pth':
+        model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif name == 'convnext_agus.pth':
+        model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    else:
+        model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
 
     model.eval()
 

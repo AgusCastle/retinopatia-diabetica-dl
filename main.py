@@ -77,13 +77,16 @@ if __name__ == '__main__':
     parser.add_argument('--category', type=int, default=0)
     parser.add_argument('--attn_block', nargs='+', type=int)
     parser.add_argument('--msg', type=str, default='N/A')
-
+    parser.add_argument('--general_info', default=False)
     # Entrenamiento SNF
 
     parser.add_argument('--snf_train', action='store_true', default=False)
     parser.add_argument('--snf_eval', action='store_true', default=False)
 
     args = parser.parse_args()
+
+    if args.general_info:
+        pass
 
     if args.snf_train:
         trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)

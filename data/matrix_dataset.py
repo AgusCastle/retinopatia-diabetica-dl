@@ -15,12 +15,12 @@ class MatrixDataset(Dataset):
 
     def __getitem__(self, index):
 
-        #if self.set == 'test': # Esto fue porque se duplicaron dos predicciones jajaja por que no se 
+        if self.set == 'test': # Esto fue porque se duplicaron dos predicciones jajaja por que no se 
             #pero asi fue rapido arrglarlo ya despues genero el json chido jaja
-            #aux = self.data['matrix']
-            #aux.pop(3)
-            #aux.pop(1)
-            #return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
+            aux = self.data[index]['matrix']
+            aux.pop(3)
+            aux.pop(1)
+            return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
         aux = self.data[index]['matrix']
         #aux =[aux[1], aux[2], aux[4], aux[6], aux[7]]
         return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']

@@ -41,8 +41,8 @@ def eval(model, device, set = 'test', flag = False, messidor=False, savename='')
     if messidor:
         dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/eyepacs_M/messidor2_{}.json'.format(set), set)
     else:
-        dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/eyepacs_M/eyepacs_{}.json'.format(set), set)
-    dataloader = DataLoader(dataset, shuffle= True, batch_size=512)
+        dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_{}.json'.format(set), set)
+    dataloader = DataLoader(dataset, shuffle= True, batch_size=128)
     process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
 
     pred = []
@@ -104,7 +104,7 @@ def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, 
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     model.train()
     loss_total = 0.
-    dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/eyepacs_log_m/eyepacs_train.json', 'train')
+    dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_train.json', 'train')
     dataloader = DataLoader(dataset, shuffle= True, batch_size=batch_size)
     scheduler = ReduceLROnPlateau(
         optimizer, 'max', patience=patience, factor=factor_lr, verbose=True, min_lr=1e-5)
@@ -141,8 +141,8 @@ def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, 
     
     eval(model, device, 'valid', True, savename=save_name)
     eval(model, device, 'test', True,savename= save_name)
-    eval(model, device, 'test', True, True, savename= save_name)
-    eval(torch.load(save_name + 'best.pth')['model'], device, 'test', True, False, savename= save_name)
+    #eval(model, device, 'test', True, True, savename= save_name)
+    eval(torch.load(save_name + 'best.pth')['model'], device, 'valid', True, False, savename= save_name)
     
     
     Util.save_checkpoint(epochs, model, optimizer, save_name, 'SNF', {'lr': lr, 'patience': patience, 'factor': factor_lr, 'epochs': epochs})

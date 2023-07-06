@@ -420,6 +420,6 @@ def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kw
     **kwargs
     )
 
-    model.load_state_dict(torch.load(pretrained_path, map_location=torch.device(0))['model'], False)
+    model.load_state_dict(torch.load(pretrained_path)['model'], False)
 
     return model

@@ -80,7 +80,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = interImageSmallCustom(5)
 
             if model_str == 'hornet_':
-                model = hornet_small_gf_att(pretrained_path='hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn)
+                model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn)
             
             if model_str == 'internimage_':
                 model = internImageSmallCAB(5,att=b_attn)  
@@ -123,7 +123,6 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
     if att:
         for i in b_attn:
             btt_name += str(i)
-        btt_name += '1'
         model_str += btt_name
 
     for epoch in range(start_epoch, epochs):
@@ -141,7 +140,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
         acc = eval(model, data_eval, 2,
-                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'eyepacs', 'loss': loss})
+                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'DDR', 'loss': loss})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
