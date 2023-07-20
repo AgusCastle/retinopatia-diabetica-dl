@@ -5,19 +5,14 @@ from models.intern_image import internImageSmallCAB, interImageSmallCustom
 import torch
 from thop import profile
 
-def infoModels(modelo : str, version = [0,0,0,0]):
+def infoModels(modelo : str, device = 0):
 
-    input_model = torch.randn((8, 3, 224, 224)).to(torch.device(0))
+    input_model = torch.randn((1, 3, 512, 512)).to(torch.device(0))
 
-    if modelo == 'hornet':
-        model = hornet_small_gf_agus('pretrain/hornet/hornet_small_gf.pth', 5)
-    elif modelo == 'internimage':
-        model = interImageSmallCustom(5)
-    else:
-        model = convNextSmallegacy(5)
+    model = torch.load(modelo, map_location=torch.device(device))['model']
     
-    model.to(torch.device(0))
-    print('Modelo -> {} version -> {}'.format(modelo, version))
+    model.to(torch.device(device))
+    print('Modelo -> {}'.format(modelo))
     print('El numero de parametros: {}'.format(count_parameters(model)))
 
     print('Funcion para opbtener los FLOPS y parametros.')

@@ -11,13 +11,14 @@ from models.convnext_small import convnext_small
 from models.hornet import hornet_small_gf_agus, hornet_small_gf_att
 from models.intern_image import interImageSmallCustom, internImageSmallCAB
 from tqdm import tqdm
+from utils.cost_lost_sensitive import CostSensitiveLoss
 from utils.save_info import Util
 from eval import eval
 import os
 
 
 def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -106,7 +107,10 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
             for g in optimizer.param_groups:
                 g['lr'] = lr
 
-    criterion = torch.nn.CrossEntropyLoss()
+    if loss_sensitive:
+        criterion = CostSensitiveLoss(5, reduction='none')
+    else:
+        criterion = torch.nn.CrossEntropyLoss()
 
     model = model.to(device)
 

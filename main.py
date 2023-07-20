@@ -61,6 +61,7 @@ if __name__ == '__main__':
     parser.add_argument('--set_lr', action='store_true', default=False)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--version', type=int, default=0)
+    parser.add_argument('--loss_sensitive', action='store_true', default=False)
 
     # Ubicaciones de archivos
     parser.add_argument('--load_model', default=None)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.general_info:
-        infoModels(modelo=args.model, version=args.attn_block)
+        infoModels(modelo=args.model, device=args.device ,version=args.attn_block)
         exit()
     if args.snf_train:
         trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)
@@ -159,4 +160,4 @@ if __name__ == '__main__':
 
         train(args.model, model_load, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 4,
-              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode, att=args.att, no_pretrain=args.no_pretrain)
+              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode, att=args.att, no_pretrain=args.no_pretrain, loss_sensitive=args.loss_sensitive)
