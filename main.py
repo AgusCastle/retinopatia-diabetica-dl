@@ -78,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--category', type=int, default=0)
     parser.add_argument('--attn_block', nargs='+', type=int)
     parser.add_argument('--msg', type=str, default='N/A')
-    parser.add_argument('--general_info', default=False)
+    parser.add_argument('--general_info', action='store_true', default=False)
     # Entrenamiento SNF
 
     parser.add_argument('--snf_train', action='store_true', default=False)

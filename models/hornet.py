@@ -377,7 +377,7 @@ def hornet_large_gf_img384(pretrained=False,in_22k=False, **kwargs):
     return model
 
 @register_model
-def hornet_small_gf_agus(pretrained_path='',in_22k=False, classes = 1000,**kwargs):
+def hornet_small_gf_agus(pretrained_path='', classes = 1000,**kwargs):
     s = 1.0/3.0
     model = HorNet(depths=[2, 3, 18, 2],num_classes=1000 ,base_dim=96, block=Block,
     gnconv=[
