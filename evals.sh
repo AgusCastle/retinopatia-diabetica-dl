@@ -93,15 +93,36 @@
 # python3.8 main.py --snf_train --lr 1.1 --decay_lr 0.9 --patience 80 --epochs 400 --batch 128 --device 0 --dump ./runSNF/SNF_18.pth
 # python3.8 main.py --snf_train --lr 1.1 --decay_lr 0.9 --patience 40 --epochs 400 --batch 256 --device 0 --dump ./runSNF/SNF_19.pth
 
-#python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 0 0 --dump ./runs_models/runs7/internimage_0000_2/internimage_0000.pth --version 8
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 0 1 --dump ./runs_models/runs7/internimage_0001_2/internimage_0001.pth --version 15
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 1 1 --dump ./runs_models/runs7/internimage_0011_2/internimage_0011.pth --version 10
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 1 0 1 --dump ./runs_models/runs7/internimage_0101_2/internimage_0101.pth --version 11
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 1 1 1 --dump ./runs_models/runs7/internimage_0111_2/internimage_0111.pth --version 12
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 0 0 1 --dump ./runs_models/runs7/internimage_1001_2/internimage_1001.pth --version 13
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 0 1 1 --dump ./runs_models/runs7/internimage_1011_2/internimage_1011.pth --version 14
-#python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.2 --patience 3 --att --attn_block 1 1 0 1 --dump ./runs_models/runs7/internimage_1101_2/internimage_1101.pth --version 15
-python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 1 1 1 --dump ./runs_models/runs7/internimage_1111_2/internimage_1111.pth --version 16 
+# #python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 0 0 --dump ./runs_models/runs7/internimage_0000_2/internimage_0000.pth --version 8
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 0 1 --dump ./runs_models/runs7/internimage_0001_2/internimage_0001.pth --version 15
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 0 1 1 --dump ./runs_models/runs7/internimage_0011_2/internimage_0011.pth --version 10
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 1 0 1 --dump ./runs_models/runs7/internimage_0101_2/internimage_0101.pth --version 11
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 0 1 1 1 --dump ./runs_models/runs7/internimage_0111_2/internimage_0111.pth --version 12
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 0 0 1 --dump ./runs_models/runs7/internimage_1001_2/internimage_1001.pth --version 13
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 0 1 1 --dump ./runs_models/runs7/internimage_1011_2/internimage_1011.pth --version 14
+# #python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.2 --patience 3 --att --attn_block 1 1 0 1 --dump ./runs_models/runs7/internimage_1101_2/internimage_1101.pth --version 15
+# python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000005 --decay_lr 0.8 --patience 3 --att --attn_block 1 1 1 1 --dump ./runs_models/runs7/internimage_1111_2/internimage_1111.pth --version 16 
+
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs11/internimage_1101/internimage_1101.pth --version 150
+
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs10/internimage_1101_1/internimage_1101.pth --version 1 --loss_sensitive --loss_mode 3 --base_loss gls
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs10/internimage_1101_2/internimage_1101.pth --version 2 --loss_sensitive --loss_mode 3 --base_loss focal_loss
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs10/internimage_1101_3/internimage_1101.pth --version 3 --loss_sensitive --loss_mode 3 --base_loss ce
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs8/internimage_0011_2/internimage_0011.pth --version 40
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000009 --decay_lr 0.9 --patience 3 --att --attn_block 0 0 1 1 --dump ./runs_models/runs8/internimage_0011_3/internimage_0011.pth --version 50
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000003 --decay_lr 0.9 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs8/internimage_0011_4/internimage_0011.pth --version 60
+
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_1/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_1/internimage_0011.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_2/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_2/internimage_0011.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_3/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_3/internimage_0011.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_4/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model runs_models/runs8/internimage_0011_4/internimage_0011.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
 
 # python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.2 --patience 3 --att --attn_block 0 0 0 1 --dump ./runs_models/runs7/hornet_0001/hornet_0001.pth --version 1
 # python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.2 --patience 3 --att --attn_block 0 0 1 1 --dump ./runs_models/runs7/hornet_0011/hornet_0011.pth --version 2
@@ -112,3 +133,37 @@ python3.8 main.py --train --epochs 100 --batch 4 --workers 4 --device 0  --model
 # python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.2 --patience 3 --att --attn_block 1 1 0 1 --dump ./runs_models/runs7/hornet_1101/hornet_1101.pth --version 7
 # python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.2 --patience 3 --att --attn_block 1 1 1 1 --dump ./runs_models/runs7/hornet_1111/hornet_1111.pth --version 8
 
+# InternImage 0011 es mejor 1101 por lo tanto los resultados se realizaron con 0011
+# Ver si la funcion softmax es mejor que
+
+# 1 Funcion de activacion con SoftMax y CE
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011/internimage_0011.pth --version 160
+
+# 2 LogSoftmax es el ganador : Probaremos M y Mopt por 30 epocas
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m/internimage_0011.pth --version 170 --loss_sensitive --loss_mode 1 --base_loss ce
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth/internimage_0011.pth --version 180 --loss_sensitive --loss_mode 2 --base_loss ce
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2/internimage_0011.pth --version 190 --loss_sensitive --loss_mode 3 --base_loss ce
+# 3 comparar las funciones de perdida gano los mode 3
+
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_gls/internimage_0011.pth --version 200 --loss_sensitive --loss_mode 3 --base_loss gls
+
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_fl/internimage_0011.pth --version 210 --loss_sensitive --loss_mode 3 --base_loss focal_loss
+
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce/internimage_0011.pth --version 220 --loss_sensitive --loss_mode 3 --base_loss ce
+
+# evaluaciones de tests
+
+# # 1
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# # 2
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# # 3
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2_gls/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2_fl/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2_ce/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+# 4 prueba con M por 60 epocas conf 220
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_ce_60/internimage_0011.pth --version 230 --loss_sensitive --loss_mode 1 --base_loss ce

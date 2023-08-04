@@ -828,7 +828,7 @@ def interImageSmallCustom(classes):
     
     return model
 
-def internImageSmallCAB(classes, att = [0, 0, 0, 1]):
+def internImageSmallCAB(classes, att = [0, 0, 0, 1], device= 0):
     model = InternImage(
             core_op='DCNv3',
             num_classes=1000,
@@ -842,6 +842,6 @@ def internImageSmallCAB(classes, att = [0, 0, 0, 1]):
             with_cp=False,
             cab=att
         )
-    model.load_state_dict(torch.load('pretrain/internimage/internimage_s_1k_224.pth')['model'], strict=False)
+    model.load_state_dict(torch.load('pretrain/internimage/internimage_s_1k_224.pth', map_location=torch.device(device))['model'], strict=False)
     
     return model

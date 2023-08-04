@@ -66,9 +66,9 @@ def eval(model, device, set = 'test', flag = False, messidor=False, savename='')
         gs = GoogleService()
 
         if messidor:
-            info_r = [savename, '-', 'messidor', '-', set]
+            info_r = [savename, '-', 'ddr', '-', set]
         else:
-            info_r = [savename, '-', 'eyepacs', '-', set]
+            info_r = [savename, '-', 'ddr', '-', set]
         info_r.extend(metrics.getall())
         gs.insertRowToSheet(info_r)
 
@@ -79,7 +79,8 @@ def evalSnf(load_model, device):
     device = torch.device(device)
     model = torch.load(load_model, map_location=device)['model']
 
-    eval(model, device, 'test', True, True, load_model)
+    eval(model, device, 'valid', True, False, load_model)
+    eval(model, device, 'test', True, False, load_model)
 
 def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, device=1, save_name='SNF', evals=False, path_model=''):
 

@@ -11,14 +11,14 @@ from models.convnext_small import convnext_small
 from models.hornet import hornet_small_gf_agus, hornet_small_gf_att
 from models.intern_image import interImageSmallCustom, internImageSmallCAB
 from tqdm import tqdm
-from utils.cost_lost_sensitive import CostSensitiveLoss
+from utils.cost_lost_sensitive import CostSensitiveLoss, CostSensitiveRegularizedLoss
 from utils.save_info import Util
 from eval import eval
 import os
 
 
 def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False, loss_mode = 1, base_loss = 'ce'):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -84,7 +84,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn)
             
             if model_str == 'internimage_':
-                model = internImageSmallCAB(5,att=b_attn)  
+                model = internImageSmallCAB(5,att=b_attn, device=devices)  
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
         
@@ -108,7 +108,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 g['lr'] = lr
 
     if loss_sensitive:
-        criterion = CostSensitiveLoss(5, reduction='none')
+        criterion = CostSensitiveRegularizedLoss(5, reduction='mean', mode=loss_mode, base_loss=base_loss)
     else:
         criterion = torch.nn.CrossEntropyLoss()
 

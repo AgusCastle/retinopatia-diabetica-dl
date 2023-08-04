@@ -130,7 +130,7 @@ class CostSensitiveLoss(nn.Module):
             raise ValueError('`reduction` must be one of \'none\', \'mean\', or \'sum\'.')
 
 class CostSensitiveRegularizedLoss(nn.Module):
-    def __init__(self,  n_classes=5, exp=2, normalization='softmax', reduction='mean', base_loss='ce', lambd=10):
+    def __init__(self,  n_classes=5, exp=2, normalization='softmax', reduction='mean', base_loss='ce', lambd=10, mode = 1):
         super(CostSensitiveRegularizedLoss, self).__init__()
         if normalization == 'softmax':
             self.normalization = nn.Softmax(dim=1)
@@ -142,22 +142,25 @@ class CostSensitiveRegularizedLoss(nn.Module):
         x = np.abs(np.arange(n_classes, dtype=np.float32))
         M = np.abs((x[:, np.newaxis] - x[np.newaxis, :])) ** exp
         #
-        # M_oph = np.array([
-        #                 [1469, 4, 5,  0,  0],
-        #                 [58, 62,  5,  0,  0],
-        #                 [22, 3, 118,  1,  0],
-        #                 [0, 0,   13, 36,  1],
-        #                 [0, 0,    0,  1, 15]
-        #                 ], dtype=np.float)
-        # M_oph = M_oph.T
-        # # Normalize M_oph to obtain M_difficulty:
-        # M_difficulty = 1-np.divide(M_oph, np.sum(M_oph, axis=1)[:, None])
-        # # OPTION 1: average M and M_difficulty:
-        # M = 0.5 * M + 0.5 * M_difficulty
-        # ################
-        # # OPTION 2: replace uninformative entries in M_difficulty by entries of M:
-        # # M_difficulty[M_oph == 0] = M[M_oph == 0]
-        # # M = M_difficulty
+        if mode in [2 , 3]:
+            M_oph = np.array([
+                            [1469, 4, 5,  0,  0],
+                            [58, 62,  5,  0,  0],
+                            [22, 3, 118,  1,  0],
+                            [0, 0,   13, 36,  1],
+                            [0, 0,    0,  1, 15]
+                            ], dtype=np.float)
+            M_oph = M_oph.T
+            # Normalize M_oph to obtain M_difficulty:
+            M_difficulty = 1-np.divide(M_oph, np.sum(M_oph, axis=1)[:, None])
+            # OPTION 1: average M and M_difficulty:
+            if mode == 2:
+                M = 0.5 * M + 0.5 * M_difficulty
+                ################
+                # OPTION 2: replace uninformative entries in M_difficulty by entries of M:
+            if mode == 3:
+                M_difficulty[M_oph == 0] = M[M_oph == 0]
+                M = M_difficulty
 
         M /= M.max()
         self.M = torch.from_numpy(M)

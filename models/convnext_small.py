@@ -12,7 +12,7 @@ from torchvision._internally_replaced_utils import load_state_dict_from_url
 from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 class ConvNeXtSmall(nn.Module):
-    def __init__(self, classes, attn = [True, True, True]) -> None:
+    def __init__(self, classes=5, attn = [True, True, True]) -> None:
         super().__init__()
         self.layer_scale = 1e-6
         self.n_layers = [3, 3, 27, 3]
