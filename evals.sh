@@ -1,3 +1,5 @@
+# source /home/bringascastle/Documentos/venvs/drpredict/bin/activate
+# cd /home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/
 #for i in runs6/ConvNeXt_0000_02/convnext_small_0000_best.pth runs6/ConvNeXt_0001_01/convnext_small_0001_best.pth runs6/ConvNeXt_0011_01/convnext_small_0011_best.pth runs6/ConvNeXt_0101_01/convnext_small_0101_best.pth runs6/ConvNeXt_0111_02/convnext_small_0111_best.pth runs6/ConvNeXt_1001_01/convnext_small_1001_best.pth runs6/ConvNeXt_1011_02/convnext_small_1011_best.pth runs6/ConvNeXt_1101_01/convnext_small_1101_best.pth runs6/ConvNeXt_1111_02/convnext_small_1111_best.pth; do
      #python3.8 main.py --matrix --set test --load_model runs_models/$i --msg JSONFiles/eyepacs_log_m/messidor2_test.json --device 0
 #done;
@@ -168,5 +170,23 @@
 
 #python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_ce_60/internimage_0011.pth --version 230 --loss_sensitive --loss_mode 1 --base_loss ce
 
-# Prueba de gabor
-python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce_gabor/internimage_0011.pth --version 300 --loss_sensitive --loss_mode 3 --base_loss ce
+# Prueba de gabor con el de Petonic o como se llame
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce_gabor/internimage_0011.pth --version 300 --loss_sensitive --loss_mode 3 --base_loss ce
+# Prueba de gabor con Pentopnic ICG antes de gab
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce_gabor_310/internimage_0011.pth --version 310 --loss_sensitive --loss_mode 3 --base_loss ce
+# Prueba de gabor despues de gab
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce_gabor_320/internimage_0011.pth --version 320 --loss_sensitive --loss_mode 3 --base_loss ce
+# Prueba gabor antes de gab
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_ce_gabor_330/internimage_0011.pth --version 330 --loss_sensitive --loss_mode 3 --base_loss ce
+# Prueba gabor antes de gab por 60 epocas
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_340/internimage_0011.pth --version 340 --loss_sensitive --loss_mode 3 --base_loss ce
+# prueba d4 gabor despues de gab 60 epocas
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_350/internimage_0011.pth --version 350 --loss_sensitive --loss_mode 3 --base_loss ce --gabor 2 --no_g 1 
+# Evaluacion despues de gabor
+# python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_350/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# Prueba gabor antes de gab por 60 epocas
+
+#python3.8 main.py --eval --load_model runs_models/runs10/internimage_1101_1/internimage_1101_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+#python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_340/internimage_0011.pth --load_model ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_340/internimage_0011.pth --version 340 --loss_sensitive --loss_mode 3 --base_loss ce --gabor 1 --no_g 1
+python3.8 main.py --eval --load_model ./runs_models/runs11/internimage_0011_m_opth_2_60_ce_gabor_340/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1

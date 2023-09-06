@@ -1,7 +1,7 @@
 setup.py
-/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/ops_dcnv3/src/vision.cpp
-/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/ops_dcnv3/src/cpu/dcnv3_cpu.cpp
-/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/ops_dcnv3/src/cuda/dcnv3_cuda.cu
+/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/models/ops_dcnv3/src/vision.cpp
+/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/models/ops_dcnv3/src/cpu/dcnv3_cpu.cpp
+/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/models/ops_dcnv3/src/cuda/dcnv3_cuda.cu
 DCNv3.egg-info/PKG-INFO
 DCNv3.egg-info/SOURCES.txt
 DCNv3.egg-info/dependency_links.txt

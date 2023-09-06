@@ -144,6 +144,7 @@ class IGabor(nn.Module):
 
         if self.layer:
             out = out.view(x.size(0), x.size(1) * self.no_g, *x.size()[2:])
+        #print('IGABOR {}'.format(out.size()))
         return out
 
     def generate_gabor_filters(self, x):

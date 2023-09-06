@@ -470,7 +470,9 @@ class InternImageBlock(nn.Module):
                  res_post_norm=False, # for InternImage-H/G
                  center_feature_scale=False, # for InternImage-H/G
                  remove_center=False,  # for InternImage-H/G
-                 cab = False
+                 cab = False,
+                 gabor = 0,
+                 no_g = 1
                  ):
         super().__init__()
         self.channels = channels
@@ -500,7 +502,7 @@ class InternImageBlock(nn.Module):
         ]
 
         if cab:
-            baux.append(BlockAttencionCAB(channels, 5, 5))
+            baux.append(BlockAttencionCAB(channels, 5, 5, gabor= gabor, no_g=no_g))
 
         self.cab = cab
         self.blocks = nn.ModuleList(baux)
@@ -582,6 +584,8 @@ class InternImage(nn.Module):
                  cls_scale=1.5,
                  with_cp=False,
                  cab = [0,0,0,0],
+                 gabor = 0,
+                 no_g = 1,
                  dw_kernel_size=None, # for InternImage-H/G
                  use_clip_projector=False, # for InternImage-H/G
                  level2_post_norm=False, # for InternImage-H/G
@@ -650,7 +654,9 @@ class InternImage(nn.Module):
                 res_post_norm=res_post_norm, # for InternImage-H/G
                 center_feature_scale=center_feature_scale, # for InternImage-H/G
                 remove_center=remove_center,  # for InternImage-H/G
-                cab=(i < self.num_levels - 1 and self.cab[i] == 1)
+                cab=(i < self.num_levels - 1 and self.cab[i] == 1), 
+                gabor=gabor,
+                no_g= no_g
             )
             self.levels.append(level)
         
@@ -689,7 +695,7 @@ class InternImage(nn.Module):
                 clip_embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         
         if cab[-1]:
-            self.cabf = AttnCABfc(960, 5, 5)
+            self.cabf = AttnCABfc(960, 5, 5, gabor=gabor, no_g=no_g)
         else:
             self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.num_layers = len(depths)
@@ -828,7 +834,7 @@ def interImageSmallCustom(classes):
     
     return model
 
-def internImageSmallCAB(classes, att = [0, 0, 0, 1], device= 0):
+def internImageSmallCAB(classes, att = [0, 0, 0, 1], device= 0, gabor = 0, no_g = 1):
     model = InternImage(
             core_op='DCNv3',
             num_classes=1000,
@@ -840,7 +846,9 @@ def internImageSmallCAB(classes, att = [0, 0, 0, 1], device= 0):
             post_norm=True,
             mlp_ratio=4.0,
             with_cp=False,
-            cab=att
+            cab=att,
+            gabor= gabor,
+            no_g= no_g
         )
     model.load_state_dict(torch.load('pretrain/internimage/internimage_s_1k_224.pth', map_location=torch.device(device))['model'], strict=False)
     

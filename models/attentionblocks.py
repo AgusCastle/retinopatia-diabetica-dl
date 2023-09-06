@@ -4,37 +4,6 @@ import pdb
 from models.gabor import IGConv, GaborPool
 import torch.nn.functional as F
 
-
-class GaborAttentionBlock(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(GaborAttentionBlock, self).__init__()
-
-        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
-        self.gabor_filters = self.create_gabor_filters(out_channels)
-        self.in_channels = in_channels
-        
-    def create_gabor_filters(self, num_filters):
-        gabor_filters = []
-        for _ in range(num_filters):
-            gabor_filter = torch.randn(3, 3)  # Replace with actual Gabor filter creation
-            gabor_filters.append(gabor_filter)
-        return nn.ParameterList([nn.Parameter(gf) for gf in gabor_filters])
-        
-    def forward(self, x):
-        #x = self.conv(x)
-        attention_weights = torch.stack([F.conv2d(x, gf.view(1, 1, 3, 3), padding=1,) for i, gf in enumerate(self.gabor_filters)], dim=1)
-        
-        attention_weights = F.softmax(attention_weights, dim=1)
-        attention_weights = attention_weights.reshape(attention_weights.size(0),
-                                                    attention_weights.size(1),
-                                                    attention_weights.size(3),
-                                                    attention_weights.size(4))
-        mul = attention_weights * x
-        print(mul.size())
-        attended_features = torch.sum(attention_weights * x, dim=1, keepdim=True)
-        print(attended_features.size())
-        return mul
-
 class AttentionLayerGabor(nn.Module):
     """
     Helper Function for real-valued gabor attention modules
@@ -43,7 +12,7 @@ class AttentionLayerGabor(nn.Module):
         super().__init__()
 
         self.attn = nn.Sequential(
-            IGConv(in_ch * 2, in_ch * no_g, kernel_size=3, padding=1, no_g=no_g),
+            IGConv(in_ch, in_ch, kernel_size=3, padding=1, no_g=no_g),
             nn.PReLU(),
             GAMReal_Module(no_g),
             GaborPool(no_g, gp),
@@ -53,7 +22,9 @@ class AttentionLayerGabor(nn.Module):
         )
 
     def forward(self, x):
-        return self.attn(x)
+        x = self.attn(x)
+        return x
+    
     
 class GAMReal_Module(nn.Module):
     """
@@ -78,7 +49,6 @@ class GAMReal_Module(nn.Module):
         C = C // self.no_g
         proj_query = x.view(m_batchsize, self.no_g, -1)
         proj_key = x.view(m_batchsize, self.no_g, -1).permute(0, 2, 1)
-
         energy = torch.bmm(proj_query, proj_key)
         energy = torch.max(energy, -1, keepdim=True)[0].expand_as(energy) - energy
         attention = self.align(energy)
@@ -89,15 +59,6 @@ class GAMReal_Module(nn.Module):
 
         out = self.gamma * out + x
         return out
-
-if __name__ == '__main__':
-     
-     tensor = torch.randn((4, 320, 32, 32))
-     #tensor = tensor.view(4, 3, -1)
-     print(tensor.size())
-     block = GAMReal_Module(2)
-     pred = block(tensor)
-     print(pred.size())
 
 class GAB(nn.Module):
     def __init__(self, in_planes):
@@ -154,26 +115,57 @@ class CAB(nn.Module):
 
 
 class BlockAttencionCAB(nn.Module):
-    def __init__(self, in_planes, n_class, k=5):
+    def __init__(self, in_planes, n_class, k=5, gabor = 0 ,no_g = 1):
         super(BlockAttencionCAB, self).__init__()
 
+        self.gabor_op = gabor
+        if gabor != 0:
+            self.gabor = AttentionLayerGabor(in_planes, no_g)
+
         self.gab = GAB(in_planes)
-        self.gabor = GAMReal_Module(in_planes)
         self.cab = CAB(in_planes, n_class, k)
-    
-    def forward(self, x):
+
+    def forward_pre_gab(self, x):
+        
         x = self.gabor(x)
         x = self.gab(x)
         x = self.cab(x)
+        
+        return x
+    
+    def forward_post_gab(self, x):
+
+        x = self.gab(x)
+        x = self.gabor(x)
+        x = self.cab(x)
+        
+        return x
+
+    def forward(self, x):
+
+        if self.gabor_op == 2:
+            x = self.forward_post_gab(x)
+        elif self.gabor_op == 1:
+            x = self.forward_pre_gab(x)
+        else:
+            x = self.gab(x)
+            x = self.cab(x)
         return x
 
 
 class AttnCABfc(nn.Module):
-    def __init__(self, in_planes, n_class, k=5, mode='custom'):
-        super(AttnCABfc, self).__init__()
-        # self.reduction = nn.Sequential(nn.Conv2d(in_planes, REDUCCION , 1, padding='same'))
+    """
+    Gabor   : 0 sin atencion gabor
+            : 1 antes de GAB
+            : 2 despues de GAB
+    """
+    def __init__(self, in_planes, n_class, k=5, mode='custom', gabor = 0, no_g = 1):
+        super(AttnCABfc, self).__init__()       
+        self.gabor_op = gabor
+        if gabor != 0:
+            
+            self.gabor = AttentionLayerGabor(in_planes , no_g)
         self.gab_ = GAB(in_planes)
-        self.gabor = GAMReal_Module(in_planes)
         self.cab_ = CAB(in_planes, n_class, k)
         self.avg_pool_ = nn.AdaptiveAvgPool2d(1)
 
@@ -193,17 +185,38 @@ class AttnCABfc(nn.Module):
                 nn.Linear(in_planes, n_class),
                 nn.Softmax(dim=1))
 
-    def forward(self, x):
+    def forward_pre_gab(self, x):
+        
         x = self.gabor(x)
-        x = self.gab_(x)        # torch.Size([2, 2048, 7, 7])
-        x = self.cab_(x)        # torch.Size([2, 2048, 7, 7])
-        x = self.avg_pool_(x)    # torch.Size([2, 2048, 1, 1])
-        x = torch.flatten(x, 1)  # torch.Size([2, 2048])
-        x = self.fc_(x)          # torch.Size([2, 5])
+        x = self.gab_(x)
+        x = self.cab_(x)        
+        x = self.avg_pool_(x)    
+        x = torch.flatten(x, 1)  
+        x = self.fc_(x)          
 
         return x
 
+    def forward_post_gab(self, x):
 
-def _attn(input_feats, classes, k=5):
-    module = AttnCABfc(input_feats.size(1), classes, k)
-    return module
+        x = self.gab_(x)
+        x = self.gabor(x)
+        x = self.cab_(x)        
+        x = self.avg_pool_(x)    
+        x = torch.flatten(x, 1)  
+        x = self.fc_(x)
+
+        return x
+
+    def forward(self, x):
+
+        if self.gabor_op == 2:
+            x = self.forward_post_gab(x)
+        elif self.gabor_op == 1:
+            x = self.forward_pre_gab(x)
+        else:
+            x = self.gab_(x)        # torch.Size([2, 2048, 7, 7])
+            x = self.cab_(x)        # torch.Size([2, 2048, 7, 7])
+            x = self.avg_pool_(x)    # torch.Size([2, 2048, 1, 1])
+            x = torch.flatten(x, 1)  # torch.Size([2, 2048])
+            x = self.fc_(x)          # torch.Size([2, 5])
+        return x

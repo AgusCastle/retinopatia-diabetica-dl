@@ -39,12 +39,15 @@ if __name__ == '__main__':
     parser.add_argument('--gradcam', action='store_true', default=False)
     parser.add_argument('--matrix', action='store_true', default= False)
     parser.add_argument('--no_pretrain', action='store_true', default= False)
+    parser.add_argument('--no_g', type=int, default=1)
     # python3.8 main.py --train --epochs 30 --lr 0.00001 --decay_lr 0.3 --batch 8 --workers 8 
     # --device 0 --patience 3 --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ 
     # --dump ./runs3/convnext_1001_1_eyepacs/convnext_1001.pth 
     # --json_result ./runs3/convnext_1001_1_eyepacs/results.json
     # --att --attn_block 1 0 0
     # Acciones para el dataset
+
+    parser.add_argument('--gabor',type=int, default= 0)
     parser.add_argument('--data_update', action='store_true', default=False)
     parser.add_argument('--csv2json', action='store_true', default=False)
     parser.add_argument('--txt2json', action='store_true', default=False)
@@ -162,4 +165,8 @@ if __name__ == '__main__':
 
         train(args.model, model_load, dump,
               dataloader_json, epoch, lr, decay_lr, batch, 4,
-              workers, 4, momentum, weigth_decay, device, patience, set_lr, b_attn=args.attn_block, version=args.version, mode=args.mode, att=args.att, no_pretrain=args.no_pretrain, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, base_loss=args.base_loss)
+              workers, 4, momentum, weigth_decay, device, patience, 
+              set_lr, b_attn=args.attn_block, version=args.version, 
+              mode=args.mode, att=args.att, no_pretrain=args.no_pretrain, 
+              loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, 
+              base_loss=args.base_loss, gabor=args.gabor, no_g=args.no_g)

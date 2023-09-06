@@ -18,7 +18,7 @@ import os
 
 
 def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False, loss_mode = 1, base_loss = 'ce'):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False, loss_mode = 1, base_loss = 'ce', gabor = 0, no_g = 1):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -84,7 +84,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn)
             
             if model_str == 'internimage_':
-                model = internImageSmallCAB(5,att=b_attn, device=devices)  
+                model = internImageSmallCAB(5,att=b_attn, device=devices, gabor=gabor, no_g=no_g) 
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
         
