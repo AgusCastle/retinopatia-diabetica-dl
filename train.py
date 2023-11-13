@@ -72,7 +72,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = ConvNextSmallAB(modo='custom')
 
             if model_str == 'convnext_small_': # ConvNeXt_####
-                model = convnext_small(classes=5 , b_attn=b_attn, pretrained= not no_pretrain)
+                model = convnext_small(classes=5 , b_attn=b_attn, pretrained= not no_pretrain, gabor=gabor, no_g=no_g)
             
             if model_str == 'hornet':
                 model = hornet_small_gf_agus(pretrained_path='hornet/hornet_small_gf.pth',pretrained=True, classes=5)
@@ -81,7 +81,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = interImageSmallCustom(5)
 
             if model_str == 'hornet_':
-                model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn)
+                model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn,  gabor=gabor, no_g=no_g)
             
             if model_str == 'internimage_':
                 model = internImageSmallCAB(5,att=b_attn, device=devices, gabor=gabor, no_g=no_g) 

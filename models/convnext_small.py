@@ -12,7 +12,7 @@ from torchvision._internally_replaced_utils import load_state_dict_from_url
 from models.attentionblocks import BlockAttencionCAB, AttnCABfc
 
 class ConvNeXtSmall(nn.Module):
-    def __init__(self, classes=5, attn = [True, True, True]) -> None:
+    def __init__(self, classes=5, attn = [True, True, True, True], gabor = 0, no_g = 1) -> None:
         super().__init__()
         self.layer_scale = 1e-6
         self.n_layers = [3, 3, 27, 3]
@@ -36,7 +36,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
 
         if attn[0]:
-            layers.append(BlockAttencionCAB(in_planes=96, n_class= 5))
+            layers.append(BlockAttencionCAB(in_planes=96, n_class= 5, gabor=gabor, no_g=no_g))
 
         features.append(nn.Sequential(*layers))
 
@@ -54,7 +54,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
         
         if attn[1]:
-            layers.append(BlockAttencionCAB(in_planes=192, n_class= 5))
+            layers.append(BlockAttencionCAB(in_planes=192, n_class= 5, gabor=gabor, no_g=no_g))
 
         features.append(nn.Sequential(*layers))
 
@@ -72,7 +72,7 @@ class ConvNeXtSmall(nn.Module):
             count_blocks += 1
         
         if attn[2]:
-            layers.append(BlockAttencionCAB(in_planes=384, n_class= 5))
+            layers.append(BlockAttencionCAB(in_planes=384, n_class= 5, gabor=gabor, no_g=no_g))
 
         features.append(nn.Sequential(*layers))
 
@@ -96,7 +96,22 @@ class ConvNeXtSmall(nn.Module):
 
         self.features = nn.Sequential(*features)
 
-        self.attb = AttnCABfc(in_planes=768, n_class=classes, k=5, mode='custom')
+        if attn[3]:
+            self.attb = AttnCABfc(in_planes=768, n_class=classes, k=5, mode='custom', gabor=gabor, no_g=no_g)
+        else:
+            self.attb  = nn.Sequential(
+                nn.AdaptiveAvgPool2d(1),
+                LayerNorm2d((768,), eps=1e-06, elementwise_affine=True),
+                nn.Flatten(start_dim=1, end_dim=-1),
+                nn.Linear(768, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Dropout(0.1),
+                nn.Linear(2048, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Linear(2048, classes),
+                nn.LogSoftmax(dim=1))
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.Linear)):
@@ -157,20 +172,20 @@ class CNBlock(nn.Module):
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-def _convnext_small(classes = 1000, pretrained = True, b_attn = [False, False, False]):
+def _convnext_small(classes = 1000, pretrained = True, b_attn = [False, False, False, False], gabor = 0, no_g = 1):
 
-    model = ConvNeXtSmall(classes, attn = b_attn)
+    model = ConvNeXtSmall(classes, attn = b_attn, gabor=gabor, no_g=no_g)
 
     if pretrained:
             state_dict = load_state_dict_from_url("https://download.pytorch.org/models/convnext_small-0c510722.pth", progress=True)
             model.load_state_dict(state_dict, strict = False)
     return model
 
-def convnext_small(classes, pretrained = True, b_attn = [0, 0, 0]):
+def convnext_small(classes, pretrained = True, b_attn = [0, 0, 0, 0], gabor = 0, no_g = 1):
 
     b_attn = [bool(x) for x in b_attn]
 
-    model = _convnext_small(classes=classes, pretrained=pretrained, b_attn=b_attn)
+    model = _convnext_small(classes=classes, pretrained=pretrained, b_attn=b_attn, gabor=gabor, no_g=no_g)
     
     return model
 

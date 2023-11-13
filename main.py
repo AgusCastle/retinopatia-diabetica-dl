@@ -96,11 +96,11 @@ if __name__ == '__main__':
         infoModels(modelo=args.model, device=args.device)
         exit()
     if args.snf_train:
-        trainEval(args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump)
+        trainEval(args.dataloader_json ,args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode)
         exit()
         
     if args.snf_eval:
-        evalSnf(args.load_model, args.device)
+        evalSnf(args.dataloader_json, args.load_model, args.device)
         exit()
     # Visualizaciones GradCAM
     if args.gradcam:

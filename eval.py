@@ -16,9 +16,9 @@ def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/
     epoch, model = checkpoint['epoch'], checkpoint['model']
     model.to(device)
     print('Especificaciones del Modelo')
-    #print(checkpoint['init'])
+    print(checkpoint['init'])
     print('Ultima epoca: {} -> {}'.format(epoch, checkpoint['str']))
-    eval(model, dataloader , 2, 2, devicef, set, True, {'modelo': "{}_{}_{}".format(checkpoint['str'], 'paper', message), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
+    eval(model, dataloader , 2, 2, devicef, set, True, {'modelo': "{}_{}".format(checkpoint['str'],checkpoint['init']['version']), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
 
 def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
     
@@ -38,14 +38,20 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         DrDataset(data + '{}.json'.format(set), set),
         batch_size=batch,
         num_workers=workers,shuffle=False
-    ) 
+    )
 
-    if name == 'convnext_ab_agus.pth':
-        model.attnblocks.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    elif name == 'convnext_agus.pth':
-        model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    
+
+    if name == 'internimage0000_best.pth' or name == 'hornet_0000_best.pth':
+        model.head[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # elif name == 'convnext_agus.pth':
+    #     model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif name == 'convnext_small_0000_best.pth':
+        model.attb[11] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
     else:
         model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+
+    
 
     model.eval()
 

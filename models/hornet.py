@@ -128,7 +128,7 @@ class HorNet(nn.Module):
     def __init__(self, in_chans=3, num_classes=1000, 
                  depths=[3, 3, 9, 3], base_dim=96, drop_path_rate=0.,
                  layer_scale_init_value=1e-6, head_init_scale=1.,
-                 gnconv=gnconv, block=Block, uniform_init=False, cab=[0,0,0,0],**kwargs
+                 gnconv=gnconv, block=Block, uniform_init=False, cab=[0,0,0,0], gabor = 0, no_g = 1, **kwargs
                  ):
         super().__init__()
 
@@ -163,7 +163,7 @@ class HorNet(nn.Module):
                 layer_scale_init_value=layer_scale_init_value, gnconv=gnconv[i]) for j in range(depths[i])]            
             
             if cab[i] and i != 3:
-                list_stages.append(BlockAttencionCAB(dims[i], 5, 5))
+                list_stages.append(BlockAttencionCAB(dims[i], 5, 5,  gabor=gabor, no_g=no_g))
 
             stage = nn.Sequential(*list_stages)
 
@@ -171,12 +171,25 @@ class HorNet(nn.Module):
             cur += depths[i]
         
         if cab[-1]:
-            self.att = AttnCABfc(dims[-1], 5, 5)
+            self.att = AttnCABfc(dims[-1], 5, 5, gabor=gabor, no_g=no_g)
         else:
             self.norm = nn.LayerNorm(dims[-1], eps=1e-6) # final norm layer
-            self.head = nn.Linear(dims[-1], num_classes)
-            self.head.weight.data.mul_(head_init_scale)
-            self.head.bias.data.mul_(head_init_scale)
+            self.head = nn.Sequential(
+                nn.Linear(dims[-1], 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Dropout(0.1),
+                nn.Linear(2048, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Linear(2048, num_classes),
+                nn.LogSoftmax(dim=1))
+            self.head[0].weight.data.mul_(head_init_scale)
+            self.head[5].weight.data.mul_(head_init_scale)
+            self.head[7].weight.data.mul_(head_init_scale)
+            self.head[0].bias.data.mul_(head_init_scale)
+            self.head[5].bias.data.mul_(head_init_scale)
+            self.head[7].bias.data.mul_(head_init_scale)
 
         self.uniform_init = uniform_init
         self.apply(self._init_weights)
@@ -407,7 +420,7 @@ def hornet_small_gf_agus(pretrained_path='', classes = 1000,**kwargs):
     return model
 
 @register_model
-def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kwargs):
+def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],  gabor=0, no_g=1, **kwargs):
     s = 1.0/3.0
     model = HorNet(depths=[2, 3, 18, 2],num_classes=classes ,base_dim=96, block=Block,
     gnconv=[
@@ -417,6 +430,8 @@ def hornet_small_gf_att(pretrained_path='', classes = 1000, att = [0,0,0,0],**kw
         partial(gnconv, order=5, s=s, h=7, w=4, gflayer=GlobalLocalFilter),
     ],
     cab=att,
+    gabor=gabor, 
+    no_g=no_g,
     **kwargs
     )
 

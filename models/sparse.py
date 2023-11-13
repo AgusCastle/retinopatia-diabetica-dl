@@ -10,6 +10,7 @@ from utils.metrics import MericsEvaluation
 from utils.save_info import Util
 from utils.services.google_service import GoogleService
 from data.matrix_dataset import MatrixDataset
+from utils.cost_lost_sensitive import CostSensitiveRegularizedLoss
 
 class SparseFusion(nn.Module):
     def __init__(self, n_classes, device) -> None:
@@ -34,12 +35,12 @@ class SparseFusion(nn.Module):
         x = torch.mul(x, self.W2)
         return self.softmax(x)
 
-def eval(model, device, set = 'test', flag = False, messidor=False, savename=''):
+def eval(dataloader, model, device, set = 'test', flag = False, messidor=False, savename=''):
     
     model = model.eval()
     model = model.to(device)
-    if messidor:
-        dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/eyepacs_M/messidor2_{}.json'.format(set), set)
+    if messidor or True:
+        dataset = MatrixDataset('{}/DDR_{}.json'.format(dataloader,set), set)
     else:
         dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_{}.json'.format(set), set)
     dataloader = DataLoader(dataset, shuffle= True, batch_size=128)
@@ -54,8 +55,8 @@ def eval(model, device, set = 'test', flag = False, messidor=False, savename='')
         gt.extend(int(label) for label in labels)
 
         labels = labels.squeeze()
-        matrix = matrix.to(torch.device(0))
-        labels = labels.to(torch.device(0))
+        matrix = matrix.to(torch.device(1))
+        labels = labels.to(torch.device(1))
 
         x = model(matrix)
         pred.extend(int(torch.argmax(tensor)) for tensor in x)
@@ -74,15 +75,15 @@ def eval(model, device, set = 'test', flag = False, messidor=False, savename='')
 
     return metrics.class_accuracy()
     
-def evalSnf(load_model, device):
+def evalSnf(dataloader ,load_model, device):
     
     device = torch.device(device)
     model = torch.load(load_model, map_location=device)['model']
 
-    eval(model, device, 'valid', True, False, load_model)
-    eval(model, device, 'test', True, False, load_model)
+    #eval(model, device, 'valid', True, False, load_model)
+    eval(dataloader,model, device, 'test', True, False, load_model)
 
-def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, device=1, save_name='SNF', evals=False, path_model=''):
+def trainEval(dataloader_str ,lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, device=1, save_name='SNF', evals=False, path_model='', loss_sensitive =  False ,loss_mode = 0):
 
     device = torch.device(device)
 
@@ -101,11 +102,15 @@ def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, 
     
     best_acc = 0
 
-    criterion = nn.CrossEntropyLoss()
+    if loss_sensitive:
+        criterion = CostSensitiveRegularizedLoss(5, reduction='mean', mode=loss_mode, base_loss='ce')
+    else:
+        criterion = nn.CrossEntropyLoss()
+
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     model.train()
     loss_total = 0.
-    dataset = MatrixDataset('/home/bringascastle/Documentos/repos/retinopatia-diabetica-dl/JSONFiles/DDR_M/DDR_train.json', 'train')
+    dataset = MatrixDataset('{}/DDR_train.json'.format(dataloader_str), 'train')
     dataloader = DataLoader(dataset, shuffle= True, batch_size=batch_size)
     scheduler = ReduceLROnPlateau(
         optimizer, 'max', patience=patience, factor=factor_lr, verbose=True, min_lr=1e-5)
@@ -130,8 +135,8 @@ def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, 
             process_bar.set_description_str(
             'Epoch {} : Loss: {:.3f}'.format(epoch + 1, float(loss)), True)
         
-        
-        acc = eval(model,device,'valid')
+        # hola guapo, te extaño. No veas porno solito! JAJAJAJA no , como les fue con el giby?
+        acc = eval(dataloader_str,model,device,'valid')
 
         print('Acc obtenido : {:.3f}'.format(acc * 100))
         scheduler.step(round(acc, 4))
@@ -140,10 +145,10 @@ def trainEval(lr=0.9, factor_lr=0.1, patience=100, epochs= 700, batch_size=512, 
             best_acc = acc
             Util.save_checkpoint(epochs, model, optimizer, save_name + 'best.pth', 'SNF', {'lr': lr, 'patience': patience, 'factor': factor_lr, 'epochs': epochs})
     
-    eval(model, device, 'valid', True, savename=save_name)
-    eval(model, device, 'test', True,savename= save_name)
+    eval(dataloader_str,model, device, 'valid', True, savename=save_name)
+    eval(dataloader_str,model, device, 'test', True,savename= save_name)
     #eval(model, device, 'test', True, True, savename= save_name)
-    eval(torch.load(save_name + 'best.pth')['model'], device, 'valid', True, False, savename= save_name)
+    eval(dataloader_str, torch.load(save_name + 'best.pth')['model'], device, 'valid', True, False, savename= save_name)
     
     
     Util.save_checkpoint(epochs, model, optimizer, save_name, 'SNF', {'lr': lr, 'patience': patience, 'factor': factor_lr, 'epochs': epochs})

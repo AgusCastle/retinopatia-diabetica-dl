@@ -162,8 +162,8 @@ class AttnCABfc(nn.Module):
     def __init__(self, in_planes, n_class, k=5, mode='custom', gabor = 0, no_g = 1):
         super(AttnCABfc, self).__init__()       
         self.gabor_op = gabor
-        if gabor != 0:
-            
+        if gabor != 0 :
+            self.gabor_op = 2
             self.gabor = AttentionLayerGabor(in_planes , no_g)
         self.gab_ = GAB(in_planes)
         self.cab_ = CAB(in_planes, n_class, k)

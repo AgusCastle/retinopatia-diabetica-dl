@@ -1,11 +1,3 @@
-using core type: DCNv3
-using activation layer: GELU
-using main norm layer: LN
-using dpr: linear, 0.2
-level2_post_norm: False
-level2_post_norm_block_ids: None
-res_post_norm: False
-remove_center: False
 InternImage(
   (patch_embed): StemLayer(
     (conv1): Conv2d(3, 40, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1))
@@ -1025,16 +1017,53 @@ InternImage(
     )
     (2): GELU(approximate=none)
   )
-  (head): Sequential(
-    (0): Linear(in_features=960, out_features=2048, bias=True)
-    (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-    (2): ReLU()
-    (3): Dropout(p=0.1, inplace=False)
-    (4): Linear(in_features=2048, out_features=2048, bias=True)
-    (5): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-    (6): ReLU()
-    (7): Linear(in_features=2048, out_features=5, bias=True)
-    (8): LogSoftmax(dim=1)
+  (cabf): AttnCABfc(
+    (gabor): AttentionLayerGabor(
+      (attn): Sequential(
+        (0): IGConv(
+          960, 960, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)
+          (gabor): IGabor()
+          (bn): BatchNorm2d(960, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+        (1): PReLU(num_parameters=1)
+        (2): GAMReal_Module(
+          (align): Softmax(dim=-1)
+        )
+        (3): GaborPool()
+        (4): Conv2d(960, 960, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (5): BatchNorm2d(960, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (6): PReLU(num_parameters=1)
+      )
+    )
+    (gab_): GAB(
+      (avg_pool): AdaptiveAvgPool2d(output_size=1)
+      (conv2): Sequential(
+        (0): Conv2d(960, 960, kernel_size=(1, 1), stride=(1, 1), padding=same)
+        (1): ReLU()
+        (2): Conv2d(960, 960, kernel_size=(1, 1), stride=(1, 1), padding=same)
+      )
+      (sigmoid): Sigmoid()
+    )
+    (cab_): CAB(
+      (conv1): Sequential(
+        (0): Conv2d(960, 25, kernel_size=(1, 1), stride=(1, 1), padding=same)
+        (1): BatchNorm2d(25, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (max_pool): AdaptiveMaxPool2d(output_size=1)
+      (sigmoid): Sigmoid()
+    )
+    (avg_pool_): AdaptiveAvgPool2d(output_size=1)
+    (fc_): Sequential(
+      (0): Linear(in_features=960, out_features=2048, bias=True)
+      (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU()
+      (3): Dropout(p=0.1, inplace=False)
+      (4): Linear(in_features=2048, out_features=2048, bias=True)
+      (5): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (6): ReLU()
+      (7): Linear(in_features=2048, out_features=5, bias=True)
+      (8): LogSoftmax(dim=1)
+    )
   )
-  (avgpool): AdaptiveAvgPool2d(output_size=(1, 1))
 )
