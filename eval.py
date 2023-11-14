@@ -132,7 +132,7 @@ def eval(model, data: str, batch: int, workers: int, device: str, set: str, test
     if message is not None:
         gs.insertRowToSheet([message])
     gs.insertRowToSheet(info_r)
-    return evals.class_accuracy()
+    return evals.class_accuracy(), evals.accuracy(), evals.kappa()
 
     # if not save:
     #     cfm = confusion_matrix(trues, preds)

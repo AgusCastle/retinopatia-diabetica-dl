@@ -376,18 +376,80 @@
 
 # Flag 7
 
-echo 'Entrenamientos ... 0001 ... Gabor - InterImage + CE + Mopht2'
-python3.8 main.py --train --load_model runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001.pth --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 1 --dump ./runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001.pth --version 6 --loss_sensitive --loss_mode 3 --base_loss ce --gabor 2 --no_g 1
-python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# echo 'Entrenamientos ... 0001 ... Gabor - InterImage + CE + Mopht2'
+# python3.8 main.py --train --load_model runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001.pth --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 1 --dump ./runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001.pth --version 6 --loss_sensitive --loss_mode 3 --base_loss ce --gabor 2 --no_g 1
+# python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0001_ce_mo2_6/internimage_0001_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
  
-# Flag 8
+# # Flag 8
 
-echo 'Entrenamientos ... 0011 ... InterImage + Gabor + CE'
-python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs16/internimage_0011_ce_8/internimage_0011.pth --version 8 --gabor 2 --no_g 1
-python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0011_ce_8/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# echo 'Entrenamientos ... 0011 ... InterImage + Gabor + CE'
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs16/internimage_0011_ce_8/internimage_0011.pth --version 8 --gabor 2 --no_g 1
+# python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0011_ce_8/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
 
-# Flag 3
+# # Flag 3
 
-echo 'Entrenamientos ... 0011 ... InterImage + CE'
-python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs16/internimage_0011_ce_9/internimage_0011.pth --version 9
-python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0011_ce_9/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# echo 'Entrenamientos ... 0011 ... InterImage + CE'
+# python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs16/internimage_0011_ce_9/internimage_0011.pth --version 9
+# python3.8 main.py --eval --load_model ./runs_models/runs16/internimage_0011_ce_9/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 0101 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 1 0 1 --dump ./runs_models/runs17/internimage_0101_mopth2_3/internimage_0101.pth --version 3 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0101_mopth2_3/internimage_0101_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0101_mopth2_3/internimage_0101_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0101_mopth2_3/internimage_0101_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 0111 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 1 1 1 --dump ./runs_models/runs17/internimage_0111_mopth2_4/internimage_0111.pth --version 4 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0111_mopth2_4/internimage_0111_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0111_mopth2_4/internimage_0111_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_0111_mopth2_4/internimage_0111_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 1001 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 0 0 1 --dump ./runs_models/runs17/internimage_1001_mopth2_5/internimage_1001.pth --version 5 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1001_mopth2_5/internimage_1001_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1001_mopth2_5/internimage_1001_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1001_mopth2_5/internimage_1001_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 1011 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 0 1 1 --dump ./runs_models/runs17/internimage_1011_mopth2_6/internimage_1011.pth --version 6 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1011_mopth2_6/internimage_1011_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1011_mopth2_6/internimage_1011_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1011_mopth2_6/internimage_1011_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 1101 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs17/internimage_1101_mopth2_7/internimage_1011.pth --version 7 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1101_mopth2_7/internimage_1101_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1101_mopth2_7/internimage_1101_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1101_mopth2_7/internimage_1101_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 1111 ... InterImage + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 1 1 --dump ./runs_models/runs17/internimage_1111_mopth2_8/internimage_1111.pth --version 8 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1111_mopth2_8/internimage_1111_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1111_mopth2_8/internimage_1111_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs17/internimage_1111_mopth2_8/internimage_1111_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0

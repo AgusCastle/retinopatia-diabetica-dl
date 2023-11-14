@@ -18,7 +18,9 @@ import os
 
 
 def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
-          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False, loss_mode = 1, base_loss = 'ce', gabor = 0, no_g = 1):
+          batch_t, batch_s, workers_t, workers_s, momentum, weigth_decay, devices, patience=3, set_lr=False, b_attn = [0, 0, 0], 
+          version = 0, att = False, mode = 'multi', no_pretrain = False, loss_sensitive = False, loss_mode = 1, base_loss = 'ce', 
+          gabor = 0, no_g = 1, warm_up = 15, save_per_epoch = []):
 
     dataloader_train = DataLoader(
         DrDataset(data + 'train.json', 'train'),
@@ -84,7 +86,8 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
                 model = hornet_small_gf_att(pretrained_path='pretrain/hornet/hornet_small_gf.pth',pretrained=True, classes=5, att=b_attn,  gabor=gabor, no_g=no_g)
             
             if model_str == 'internimage_':
-                model = internImageSmallCAB(5,att=b_attn, device=devices, gabor=gabor, no_g=no_g) 
+                model = internImageSmallCAB(5,att=b_attn, device=devices, gabor=gabor, no_g=no_g)
+
         optimizer = torch.optim.Adam(
             model.parameters(), lr, weight_decay=weigth_decay)
         
@@ -116,7 +119,10 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
 
     data_eval = data
 
-    best = 0.0
+    best_aa = 0.0
+    best_acc = 0.0
+    best_wk = 0.0
+
     best_dump = ''
 
     factor_lr = decay_lr
@@ -134,6 +140,9 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         model, loss = train_one_epoch(model, dataloader_train, optimizer,
                         criterion, epoch, device, None)
 
+        if epoch + 1 in save_per_epoch:
+            Util.save_checkpoint(epoch, model, optimizer, dump + '{}.pth'.format(epoch + 1), model_str, info=hypers)
+        
         Util.save_checkpoint(epoch, model, optimizer, dump, model_str, info=hypers)
         print('Evaluando....')
 
@@ -143,8 +152,8 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         #Util.saveInfoXepoch(os.path.dirname(json_result) +
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
-        acc = eval(model, data_eval, 2,
-                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': 'DDR', 'loss': loss})
+        aa, acc, wk  = eval(model, data_eval, 2,
+                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': data.split('/')[1], 'loss': loss})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')
@@ -152,13 +161,25 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         #eval(model, data_eval, batch_s,
         #               workers_s, device, 'test', False,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version) , 'epoca': epoch, 'dataset': 'messidor2', 'loss': '-'})
 
-        if epoch > 15:
+        if epoch > warm_up:
             scheduler.step(acc)
 
-        if best < acc:
-            best = acc
+        if best_acc < acc:
+            best_acc = acc
             best_dump = os.path.dirname(dump) + \
-                '/{}_best.pth'.format(model_str)
+                '/{}_best_acc.pth'.format(model_str)
+            Util.save_checkpoint(epoch, model, optimizer, best_dump, model_str, hypers)
+        
+        if best_aa < aa:
+            best_aa = aa
+            best_dump = os.path.dirname(dump) + \
+                '/{}_best_aa.pth'.format(model_str)
+            Util.save_checkpoint(epoch, model, optimizer, best_dump, model_str, hypers)
+
+        if best_wk < wk:
+            best_wk = wk
+            best_dump = os.path.dirname(dump) + \
+                '/{}_best_wk.pth'.format(model_str)
             Util.save_checkpoint(epoch, model, optimizer, best_dump, model_str, hypers)
 
 

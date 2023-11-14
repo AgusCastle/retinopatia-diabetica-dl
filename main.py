@@ -67,6 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('--loss_sensitive', action='store_true', default=False)
     parser.add_argument('--loss_mode', type=int, default=1)
     parser.add_argument('--base_loss', type=str, default='ce')
+    parser.add_argument('--warm_up', type=int, default=15)
 
     # Ubicaciones de archivos
     parser.add_argument('--load_model', default=None)
@@ -83,6 +84,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--category', type=int, default=0)
     parser.add_argument('--attn_block', nargs='+', type=int)
+    parser.add_argument('--save_per_epoch', nargs='+', type=int)
     parser.add_argument('--msg', type=str, default='N/A')
     parser.add_argument('--general_info', action='store_true', default=False)
     # Entrenamiento SNF
@@ -169,4 +171,4 @@ if __name__ == '__main__':
               set_lr, b_attn=args.attn_block, version=args.version, 
               mode=args.mode, att=args.att, no_pretrain=args.no_pretrain, 
               loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, 
-              base_loss=args.base_loss, gabor=args.gabor, no_g=args.no_g)
+              base_loss=args.base_loss, gabor=args.gabor, no_g=args.no_g, warm_up=args.warm_up, save_per_epoch=args.save_per_epoch)
