@@ -147,11 +147,107 @@
 # python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 0  --model internimage_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs15/internimage_0011_m_opth_2_60_ce_agabor_ultimo_2/internimage_0011.pth --version 2 --loss_sensitive --loss_mode 3 --base_loss ce
 # python3.8 main.py --eval --load_model ./runs_models/runs15/internimage_0011_m_opth_2_60_ce_agabor_ultimo_2/internimage_0011_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
 
-#echo 'Entrenamientos ... 0000 ... HorNet'
-#python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 0 --dump ./runs_models/runs16/hornet_0000_ce_1/hornet_0000.pth --version 1
-python3.8 main.py --eval --load_model ./runs_models/runs16/hornet_0000_ce_1/hornet_0000_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
+# #echo 'Entrenamientos ... 0000 ... HorNet'
+# #python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 0 --dump ./runs_models/runs16/hornet_0000_ce_1/hornet_0000.pth --version 1
+# python3.8 main.py --eval --load_model ./runs_models/runs16/hornet_0000_ce_1/hornet_0000_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
  
-#echo 'Entrenamientos ... 0000 ... ConvNeXt'
-python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 0 --dump ./runs_models/runs16/convnext_0000_ce_2/convnext_0000.pth --version 2  
-python3.8 main.py --eval --load_model ./runs_models/runs16/convnext_0000_ce_2/convnext_small_0000_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
- 
+# #echo 'Entrenamientos ... 0000 ... ConvNeXt'
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 0 --dump ./runs_models/runs16/convnext_0000_ce_2/convnext_0000.pth --version 2  
+# python3.8 main.py --eval --load_model ./runs_models/runs16/convnext_0000_ce_2/convnext_small_0000_best.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
+
+echo 'Entrenamientos ... 0000 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 0 --dump ./runs_models/runs18/convnext_small_0000_mopth2_0/convnext_small_0000.pth --version 0 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0000_mopth2_0/convnext_small_0000_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0000_mopth2_0/convnext_small_0000_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0000_mopth2_0/convnext_small_0000_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 0001 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 1 --dump ./runs_models/runs18/convnext_small_0001_mopth2_1/convnext_small_0001.pth --version 1 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0001_mopth2_1/convnext_small_0001_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0001_mopth2_1/convnext_small_0001_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0001_mopth2_1/convnext_small_0001_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 0011 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 1 1 --dump ./runs_models/runs18/convnext_small_0011_mopth2_2/convnext_small_0011.pth --version 2 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0011_mopth2_2/convnext_small_0011_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0011_mopth2_2/convnext_small_0011_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0011_mopth2_2/convnext_small_0011_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 0101 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 1 0 1 --dump ./runs_models/runs18/convnext_small_0101_mopth2_3/convnext_small_0101.pth --version 3 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0101_mopth2_3/convnext_small_0101_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0101_mopth2_3/convnext_small_0101_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0101_mopth2_3/convnext_small_0101_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 0111 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 1 1 1 --dump ./runs_models/runs18/convnext_small_0111_mopth2_4/convnext_small_0111.pth --version 4 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0111_mopth2_4/convnext_small_0111_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0111_mopth2_4/convnext_small_0111_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_0111_mopth2_4/convnext_small_0111_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 1001 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 0 0 1 --dump ./runs_models/runs18/convnext_small_1001_mopth2_5/convnext_small_1001.pth --version 5 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1001_mopth2_5/convnext_small_1001_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1001_mopth2_5/convnext_small_1001_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1001_mopth2_5/convnext_small_1001_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 1011 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 0 1 1 --dump ./runs_models/runs18/convnext_small_1011_mopth2_6/convnext_small_1011.pth --version 6 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1011_mopth2_6/convnext_small_1011_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1011_mopth2_6/convnext_small_1011_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1011_mopth2_6/convnext_small_1011_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
+echo 'Entrenamientos ... 1101 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 0 1 --dump ./runs_models/runs18/convnext_small_1101_mopth2_7/convnext_small_1011.pth --version 7 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1101_mopth2_7/convnext_small_1101_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1101_mopth2_7/convnext_small_1101_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1101_mopth2_7/convnext_small_1101_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+echo 'Entrenamientos ... 1111 ... convnext_small_ + Mopth2'
+
+python3.8 main.py --train --epochs 60 --batch 4 --workers 4 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 1 1 1 1 --dump ./runs_models/runs18/convnext_small_1111_mopth2_8/convnext_small_1111.pth --version 8 --warm_up 15 --save_per_epoch 20 30 40
+# Acc
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1111_mopth2_8/convnext_small_1111_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# AA
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1111_mopth2_8/convnext_small_1111_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+# WK
+python3.8 main.py --eval --load_model ./runs_models/runs18/convnext_small_1111_mopth2_8/convnext_small_1111_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 0
+
+
