@@ -153,7 +153,7 @@ def train(model_str, model_load, dump: str, data, epochs, lr, decay_lr,
         #                    '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'train')
 
         aa, acc, wk  = eval(model, data_eval, 2,
-                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': data.split('/')[1], 'loss': loss})
+                        2, device, 'valid', True,  {'modelo': '{}_{}_{}'.format(model_str, btt_name, version), 'epoca': epoch, 'dataset': data.split('/')[2], 'loss': loss})
 
         # Util.saveInfoXepoch(os.path.dirname(json_result) +
          #                   '/info_train_{}.json'.format(model_str), epoch, acc, aps, 'valid')

@@ -670,8 +670,16 @@ class InternImage(nn.Module):
                                  'channels_first', 'channels_first'),
                 build_act_layer(act_layer))
             if not cab[-1]:
-                self.head = nn.Linear(int(self.num_features * cls_scale), num_classes) \
-                if num_classes > 0 else nn.Identity()
+                self.head = nn.Sequential(
+                nn.Linear(960, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Dropout(0.1),
+                nn.Linear(2048, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Linear(2048, 5),
+                nn.LogSoftmax(dim=1))
         else: # for InternImage-H/G
             pretrain_embed_dim, _stride, attnpool_num_heads, clip_embed_dim = 1024, 2, 16, 768
             self.dcnv3_head_x4 = nn.Sequential(
@@ -691,8 +699,16 @@ class InternImage(nn.Module):
                 norm_layer=norm_layer,
                 out_dim=clip_embed_dim)
             self.fc_norm = build_norm_layer(clip_embed_dim, norm_layer, eps=1e-6)
-            self.head = nn.Linear(
-                clip_embed_dim, num_classes) if num_classes > 0 else nn.Identity()
+            self.head = nn.Sequential(
+                nn.Linear(960, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Dropout(0.1),
+                nn.Linear(2048, 2048),
+                nn.BatchNorm1d(2048),
+                nn.ReLU(),
+                nn.Linear(2048, 5),
+                nn.LogSoftmax(dim=1))
         
         if cab[-1]:
             self.cabf = AttnCABfc(960, 5, 5, gabor=gabor, no_g=no_g)

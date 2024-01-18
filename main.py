@@ -5,7 +5,7 @@ from eval import eval, evalModelOneDataset, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
-from models.sparse import trainEval, evalSnf, SparseFusion
+from models.sparse import trainEval, trainEvalCustom, evalSnf, SparseFusion
 from utils.info_models import infoModels
 
 MODELS = ['resnet50_abs', 
@@ -82,13 +82,19 @@ if __name__ == '__main__':
     parser.add_argument('--save_json', default=None)
     parser.add_argument('--set', default='train')
 
+    parser.add_argument('--tipo_head', default=None)
+
     parser.add_argument('--category', type=int, default=0)
     parser.add_argument('--attn_block', nargs='+', type=int)
-    parser.add_argument('--save_per_epoch', nargs='+', type=int)
+    parser.add_argument('--save_per_epoch', nargs='+', type=int, default=[])
+
+    parser.add_argument('--custom', nargs='+', type=int, default=[])
     parser.add_argument('--msg', type=str, default='N/A')
     parser.add_argument('--general_info', action='store_true', default=False)
+
     # Entrenamiento SNF
 
+    parser.add_argument('--snf_train_custom', action='store_true', default=False)
     parser.add_argument('--snf_train', action='store_true', default=False)
     parser.add_argument('--snf_eval', action='store_true', default=False)
 
@@ -97,8 +103,13 @@ if __name__ == '__main__':
     if args.general_info:
         infoModels(modelo=args.model, device=args.device)
         exit()
+
     if args.snf_train:
         trainEval(args.dataloader_json ,args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode)
+        exit()
+
+    if args.snf_train_custom:
+        trainEvalCustom(args.dataloader_json ,args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, selected=args.custom)
         exit()
         
     if args.snf_eval:
@@ -110,7 +121,7 @@ if __name__ == '__main__':
 
     # Evaluaciones para la SNF
     if args.matrix and args.load_model is not None:
-        generateMatrix_evals(str(args.load_model), args.set, args.device, filename=args.msg)
+        generateMatrix_evals(str(args.load_model), args.set, args.device, args.tipo_head ,filename=args.msg)
         exit()
 
     # Evaluaciones para modelos individuales con un solo conjunto de datos

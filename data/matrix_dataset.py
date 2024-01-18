@@ -26,3 +26,28 @@ class MatrixDataset(Dataset):
         return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
     def __len__(self):
         return self.data.__len__()
+    
+class MatrixDatasetCustom(Dataset):
+    def __init__(self, root, set, selects : list):
+        super()
+        self.root = root
+        self.selects = selects
+
+        with open(root, 'r') as file:
+            data = json.load(file)
+
+        self.set = set
+        self.data = data
+
+    def __getitem__(self, index):
+
+        aux = []
+
+        for i, vectores in enumerate(self.data[index]['matrix']):
+            if i  in self.selects:
+                aux.append(vectores)
+                
+        return torch.permute(torch.FloatTensor(aux), (1, 0)), self.data[index]['label'], self.data[index]['filename']
+    
+    def __len__(self):
+        return self.data.__len__()

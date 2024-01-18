@@ -78,6 +78,8 @@ class MericsEvaluation():
             self.accuracy(), self.class_accuracy(), self.accuracy02(), self.accuracy134(), a, b, c, d, e,
             self.kappa(), self.matthews_coeficent(), self.f1(), self.precision(), self.recall() 
         ]
+
+        #print(confusion_matrix(self.labels, self.preds).tolist())
         return result
 
 # metrics = MericsEvaluation([1,1,1,2,3,3,3,3,4,4,4,0,0,0,0,0],[2,1,2,2,3,3,3,4,4,4,4,0,0,0,0,0], 'ddr')

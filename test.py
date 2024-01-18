@@ -25,19 +25,44 @@
 # Opcion de imagen para DR4
 # /home/bringascastle/Documentos/datasets-retina/DDR-dataset/DR_grading/valid/007-6860-400.jpg
 
-import json 
+# import json 
 
-def obtener_indice_maximo(arreglo):
-    indice_maximo = max(range(len(arreglo)), key=lambda i: arreglo[i])
-    return indice_maximo
+# def obtener_indice_maximo(arreglo):
+#     indice_maximo = max(range(len(arreglo)), key=lambda i: arreglo[i])
+#     return indice_maximo
 
-with open('/Users/agustincastillo/Documents/DDR_valid.json', 'r') as file:
-    data = json.load(file)
+# with open('/Users/agustincastillo/Documents/DDR_valid.json', 'r') as file:
+#     data = json.load(file)
 
-for img in data:
-    if img['label'] not in (0, 2, 1, 3):
-        maxs = [obtener_indice_maximo(img['matrix'][i]) for i in range(len(img['matrix']))]
-        if maxs[1] != 4:
-            print(img['filename'])
-            print(maxs)
-        
+# for img in data:
+#     if img['label'] not in (0, 2, 1, 3):
+#         maxs = [obtener_indice_maximo(img['matrix'][i]) for i in range(len(img['matrix']))]
+#         if maxs[1] != 4:
+#             print(img['filename'])
+#             print(maxs)
+
+
+import json
+
+def openJSON(path):
+    
+    with open(path, 'r') as file:
+        data = json.load(file)
+    
+    return data
+
+data1 = openJSON('JSONFiles/eyepacs_resam/messidor2_test.json')
+
+# data2 = openJSON('JSONFiles/eyepacs_resam/eyepacs_train.json')
+
+# data3 = openJSON('JSONFiles/eyepacs_resam/eyepacs_valid.json')
+
+def imprime(data):
+    t = {0:0,1:0,2:0,3:0,4:0}
+    for i in data['labels']:
+        t[i] += 1
+    print(t)
+
+imprime(data1)
+# imprime(data2)
+# imprime(data3)

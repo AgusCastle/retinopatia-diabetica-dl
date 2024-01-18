@@ -205,6 +205,10 @@ class Util():
     
     def loadJSONFile(filename):
 
+        if not os.path.exists(filename):
+            with open(filename, 'w') as archivo:
+                json.dump([], archivo)
+
         with open(filename, 'r') as file:
             data = json.load(file)
         

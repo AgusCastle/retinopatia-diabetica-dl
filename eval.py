@@ -20,7 +20,7 @@ def evalModelOneDataset(model_load: str, dataloader: str = 'JSONFiles/messidor2/
     print('Ultima epoca: {} -> {}'.format(epoch, checkpoint['str']))
     eval(model, dataloader , 2, 2, devicef, set, True, {'modelo': "{}_{}".format(checkpoint['str'],checkpoint['init']['version']), 'epoca': epoch, 'loss': '-', 'dataset': getDataset(dataloader)})
 
-def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = None):
+def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, tipo_head = '', filename = None):
     
     device = torch.device(devicef)
 
@@ -30,9 +30,9 @@ def generateMatrix_evals(model_load: str, set = 'valid',devicef = 1, filename = 
     model = checkpoint['model']
     model.to(device)
     print('Modelo: {}, en la epoca: {} '.format(Path(model_load).name, epoch))
-    eval_to_vector(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, filename, Path(model_load).name)
+    eval_to_vector(model, 'JSONFiles/DDR/DDR_', 1, 1, devicef, set, filename, Path(model_load).name, tipo_head)
 
-def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name):
+def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set: str, jsonfile: str, name ,tipo_head):
 
     dataloader = DataLoader(
         DrDataset(data + '{}.json'.format(set), set),
@@ -40,16 +40,24 @@ def eval_to_vector(model, data: str, batch: int, workers: int, device: str, set:
         num_workers=workers,shuffle=False
     )
 
-    
-
-    if name == 'internimage0000_best.pth' or name == 'hornet_0000_best.pth':
+    if tipo_head == 'att_h' and (name == 'hornet_0000_best_acc.pth' or name == 'hornet_0000_best_aa.pth' or name == 'hornet_0000_best_wk.pth'):
         model.head[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    # elif name == 'convnext_agus.pth':
-    #     model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    elif name == 'convnext_small_0000_best.pth':
-        model.attb[11] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
-    else:
+    elif tipo_head == 'att':
+        model.cabf.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif tipo_head == 'att_h':
+        model.att.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif tipo_head == 'att_c' and (name == 'convnext_small_0000_best_acc.pth' or name == 'convnext_small_0000_best_aa.pth' or name == 'convnext_small_0000_best_wk.pth'):
+        model.attb[11] = torch.nn.Sequential(torch.nn.Softmax(dim=1))   
+    elif tipo_head == 'att_c' :
         model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    elif tipo_head == 'att_i' and (name == 'internimage_0000_best_acc.pth' or name == 'internimage_0000_best_aa.pth'  or name == 'internimage_0000_best_wk.pth'):
+        model.head[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # # elif name == 'convnext_agus.pth':
+    # #     model.classifier[10] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # elif name == 'convnext_small_0000_best.pth':
+    #     model.attb[11] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
+    # else:
+    #     model.attb.fc_[8] = torch.nn.Sequential(torch.nn.Softmax(dim=1))
 
     
 
