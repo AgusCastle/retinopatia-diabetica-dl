@@ -5,7 +5,7 @@ from eval import eval, evalModelOneDataset, generateMatrix_evals
 from train import train
 from utils.save_info import Util
 from utils.grad_cam import viewGradCam
-from models.sparse import trainEval, trainEvalCustom, evalSnf, SparseFusion
+from models.sparse import trainEval, trainEvalCustom, evalSnf, SparseFusion, trainEvalCustomMultiples
 from utils.info_models import infoModels
 
 MODELS = ['resnet50_abs', 
@@ -72,6 +72,8 @@ if __name__ == '__main__':
     # Ubicaciones de archivos
     parser.add_argument('--load_model', default=None)
     parser.add_argument('--dataloader_json', default=None)
+    parser.add_argument('--dataloader_json_2', default=None)
+    parser.add_argument('--dataloader_json_3', default=None)
     parser.add_argument('--json_file', default=None)
     parser.add_argument('--dump', default=None)
     parser.add_argument('--img_path', default=None)
@@ -94,6 +96,7 @@ if __name__ == '__main__':
 
     # Entrenamiento SNF
 
+    parser.add_argument('--snf_train_custom_union', action='store_true', default=False)
     parser.add_argument('--snf_train_custom', action='store_true', default=False)
     parser.add_argument('--snf_train', action='store_true', default=False)
     parser.add_argument('--snf_eval', action='store_true', default=False)
@@ -110,6 +113,10 @@ if __name__ == '__main__':
 
     if args.snf_train_custom:
         trainEvalCustom(args.dataloader_json ,args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, selected=args.custom)
+        exit()
+    
+    if args.snf_train_custom_union:
+        trainEvalCustomMultiples(args.dataloader_json, args.dataloader_json_2, args.dataloader_json_3,args.lr, args.decay_lr, args.patience, args.epochs, args.batch, args.device,args.dump, loss_sensitive=args.loss_sensitive, loss_mode=args.loss_mode, selected=args.custom)
         exit()
         
     if args.snf_eval:
