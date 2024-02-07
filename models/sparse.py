@@ -305,19 +305,18 @@ def trainEvalCustomMultiples(dataloader_str, dataloader_str_2, dataloader_str_3 
     for i in range(3):
         rt_train.append('{}train.json'.format(roots[i]))
 
-    dataset = MatrixDatasetCustom(roots, 'train', selects=selected)
+    dataset = MatrixDatasetCustomUnion(rt_train, 'train', selects=selected)
     dataloader = DataLoader(dataset, shuffle= True, batch_size=batch_size)
     scheduler = ReduceLROnPlateau(
         optimizer, 'max', patience=patience, factor=factor_lr, verbose=True, min_lr=1e-5)
     for epoch in range(epochs):
         process_bar = tqdm(enumerate(dataloader), total=len(dataloader))
         for _, batch in process_bar:
-
+            
             matrix, label, _ = batch
             label = label.squeeze()
             matrix = matrix.to(device)
             label = label.to(device)
-
             x = model(matrix)
 
             loss = criterion(x, label)

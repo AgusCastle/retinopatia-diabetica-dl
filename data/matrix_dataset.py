@@ -54,7 +54,7 @@ class MatrixDatasetCustom(Dataset):
     
 
 class MatrixDatasetCustomUnion(Dataset):
-    def __init__(self, roots: [], set: str, selects : list):
+    def __init__(self, roots: list, set: str, selects : list):
         super()
         self.roots = roots
         self.selects = selects
@@ -66,7 +66,7 @@ class MatrixDatasetCustomUnion(Dataset):
                 if len(data) == 0:
                     data = json.load(file)
                 else:
-                    data = agregarData(json.load(file))
+                    data = agregarData(data, json.load(file))
 
         self.set = set
         self.data = data
@@ -74,6 +74,7 @@ class MatrixDatasetCustomUnion(Dataset):
     def __getitem__(self, index):
 
         aux = []
+        
 
         for i, vectores in enumerate(self.data[index]['matrix']):
             if i  in self.selects:
@@ -84,11 +85,11 @@ class MatrixDatasetCustomUnion(Dataset):
     def __len__(self):
         return self.data.__len__()
     
-def agregarData(old : [], new: [] ):
+def agregarData(old : list, new: list ):
 
     for obj in old:
         nombre = obj['filename']
-        obj['matrix'].extends(getContainsDict(new, nombre))
+        obj['matrix'].extend(getContainsDict(new, nombre))
     
     return old
 

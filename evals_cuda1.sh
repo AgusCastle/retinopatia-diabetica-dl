@@ -595,11 +595,11 @@
 
 # python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/DDR/DDR_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 1 0 0 1 --dump ./runs_models/runs40/convnext_small_0001_mopth2_5/convnext_small_0001.pth --version 5 --warm_up 10 --loss_sensitive --loss_mode 3
 # # Acc
-python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
-# AA
-python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device  1
-# WK
-python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device  1
+# python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_acc.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_aa.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device  1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_mopth2_5/convnext_small_1001_best_wk.pth --dataloader_json JSONFiles/DDR/DDR_  --set test --att --device  1
 
 
 # echo 'Entrenamientos ... 1011 ... convnext_small_ + Mopth2  -  6'
@@ -642,3 +642,74 @@ python3.8 main.py --eval --load_model ./runs_models/runs40/convnext_small_1001_m
 #      python3.8 main.py --matrix --set test --load_model runs_models/runs40/convnext_small_"$i"_mopth2_"$contador8"/convnext_small_"$i"_best_wk.pth --msg JSONFiles/finales_convnext/ddr_convnext_wk/DDR_test.json --device 0 --tipo_head att_c
 #      let contador8++
 # done;
+
+
+#echo 'Entrenamientos ... 0000 ... convnext_small_ + Mopth2  -  0'
+
+#python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 0 0 0 0 --dump ./runs_models/last_dance/convnext_0000_0/convnext_0000.pth --version 0 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0000_0/convnext_small_0000_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0000_0/convnext_small_0000_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0000_0/convnext_small_0000_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+
+# echo 'Entrenamientos ... 1101 ... convnext_small_ + Mopth2  -  1'
+
+# python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 1 1 0 1 --dump ./runs_models/last_dance/convnext_1101_1/convnext_1101.pth --version 1 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# # Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+
+# echo 'Entrenamientos ... 1001 ... convnext_small_ + Mopth2  -  2'
+
+# python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 1 0 0 1 --dump ./runs_models/last_dance/convnext_1001_2/convnext_1001.pth --version 2 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# # Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1001_2/convnext_small_1001_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1001_2/convnext_small_1001_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1001_2/convnext_small_1001_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+
+# echo 'Entrenamientos ...0001 ... convnext_small_ + Mopth2  -  3'
+
+# python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 0 0 0 1 --dump ./runs_models/last_dance/convnext_0001_3/convnext_0001.pth --load_model ./runs_models/last_dance/convnext_0001_3/convnext_0001.pth --version 3 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# # Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0001_3/convnext_smal_0001_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0001_3/convnext_small_0001_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_0001_3/convnext_small_0001_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+
+# echo 'Entrenamientos ...1111 ... convnext_small_ + Mopth2  -  4'
+
+# python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 1 1 1 1 --dump ./runs_models/last_dance/convnext_1111_4/convnext_1111.pth --version 4 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# # Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1111_4/convnext_small_1111_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1111_4/convnext_small_1111_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1111_4/convnext_small_1111_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1    
+
+# echo 'Entrenamientos ... 0001 ... hornet_ + Mopth2 .. 4'
+
+# python3.8 main.py --train --epochs 30 --batch 4 --workers 4 --device 1  --model hornet_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.000007 --decay_lr 0.8 --patience 8 --att --attn_block 0 0 0 1 --dump ./runs_models/last_dance/hornet_0001_4/hornet_0001.pth --version 4 --warm_up 10 --save_per_epoch 30 --loss_sensitive --loss_mode 3
+# # Acc
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/hornet_0001_4/hornet_0001_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA  
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/hornet_0001_4/hornet_0001_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+# python3.8 main.py --eval --load_model ./runs_models/last_dance/hornet_0001_4/hornet_0001_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+
+ echo 'Entrenamientos ... 1101 ... convnext_small_ + Mopth2  -  1'
+
+ python3.8 main.py --train --epochs 30 --batch 8 --workers 8 --device 1  --model convnext_small_ --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_ --lr 0.00001 --decay_lr 0.6 --patience 4 --att --attn_block 1 1 0 1 --load_model  ./runs_models/last_dance/convnext_1101_1/convnext_1101.pth --dump ./runs_models/last_dance/convnext_1101_1/convnext_1101.pth --version 1 --warm_up 8 --loss_sensitive --loss_mode 3 --save_per_epoch 30
+# # Acc
+ python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_acc.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # AA
+ python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_aa.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
+# # WK
+ python3.8 main.py --eval --load_model ./runs_models/last_dance/convnext_1101_1/convnext_small_1101_best_wk.pth --dataloader_json ./JSONFiles/eyepacs_resam/eyepacs_  --set test --att --device 1
